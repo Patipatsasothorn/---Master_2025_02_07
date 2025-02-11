@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "IwBCp4OECEs=",
+  "dgSpecHash": "yqOsTOwIW0M=",
   "success": true,
-  "projectFilePath": "D:\\SCAN\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
+  "projectFilePath": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\BPI099\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\BPI099\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

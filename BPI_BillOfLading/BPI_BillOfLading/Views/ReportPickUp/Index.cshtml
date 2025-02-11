@@ -119,8 +119,7 @@
                 <th>วันที่เบิก</th>
                 <th>เลขที่ใบเบิก</th>
                 <th>แผนก</th>
-                @*                 <th>คลัง</th>
-                <th>Bin</th> *@
+                <th>ชื่อผู้เบิก</th>
                 <th>รหัสสินค้า</th>
                 <th>รายละเอียด</th>
                 <th>จำนวน</th>
@@ -219,7 +218,7 @@
                                 '<td>' + item.docDate + '</td>' +
                                 '<td>' + item.docID + '</td>' +
                                 '<td>' + item.depName + '</td>' +
-                                // '<td>' + item.wareHouse + '</td>' +
+                                '<td>' + item.userName + '</td>' +
                                 // '<td>' + item.bin + '</td>' +
                                 '<td>' + item.partNum + '</td>' +
                                 '<td>' + item.partDescription + '</td>' +
@@ -299,30 +298,30 @@
             const data = table.rows().data().toArray();
 
             // กำหนด Header สำหรับไฟล์ Excel
-            worksheet.mergeCells("A1:L1");
+            worksheet.mergeCells("A1:M1");
             const headerCell = worksheet.getCell("A1");
             headerCell.value = company;
             headerCell.font = { bold: true, size: 14 };
             headerCell.alignment = { horizontal: "center", vertical: "middle" };
 
-            worksheet.mergeCells("A2:L2");
+            worksheet.mergeCells("A2:M2");
             const plantCell = worksheet.getCell("A2");
             plantCell.value = `โรงงาน : ${plant}`;
             plantCell.font = { bold: true, size: 12 };
             plantCell.alignment = { horizontal: "center", vertical: "middle" };
 
-            worksheet.mergeCells("A3:L3");
+            worksheet.mergeCells("A3:M3");
             const messageTop = worksheet.getCell("A3");
             messageTop.value = `จากวันที่ : ${beginDate} - ${endDate}`;
             messageTop.font = { bold: true, size: 12 };
             messageTop.alignment = { horizontal: "center", vertical: "middle" };
 
             worksheet.columns = [
-                { key: "docDate", width: 10 },
+                { key: "docDate", width: 15 },
                 { key: "docID", width: 16 },
                 { key: "index", width: 8 },
                 { key: "depName", width: 13 },
-                // { key: "wareHouse", width: 7 },
+                { key: "userName", width: 9 },
                 // { key: "bin", width: 9 },
                 { key: "partNum", width: 28.24 },
                 { key: "partDescription", width: 66.56 },
@@ -340,7 +339,7 @@
                 "เลขที่ใบเบิก",
                 "รายการ",
                 "แผนก",
-                // "คลัง",
+                "ชื่อผู้เบิก",
                 // "bin",
                 "รหัสสินค้า",
                 "รายละเอียด",
@@ -393,20 +392,20 @@
                         worksheet.getCell(`D${rowIndex}`).value = row[3]; // Dep
                         worksheet.getCell(`E${rowIndex}`).value = row[4]; // Part Number
                         worksheet.getCell(`F${rowIndex}`).value = row[5]; // Part Description
-                        // worksheet.getCell(`G${rowIndex}`).value = row[6]; // Warehouse
+                        worksheet.getCell(`G${rowIndex}`).value = row[6]; // Warehouse
                         // worksheet.getCell(`H${rowIndex}`).value = row[7]; // Bin
 
                         // I: แปลงเป็นตัวเลข, กำหนดรูปแบบ และชิดขวา
-                        const descriptionValue = parseFloat(row[6]) || 0; // ตรวจสอบว่าเป็นตัวเลขหรือไม่
-                        worksheet.getCell(`G${rowIndex}`).value = descriptionValue;
-                        worksheet.getCell(`G${rowIndex}`).numFmt = '0.00'; // รูปแบบตัวเลข 2 ทศนิยม
-                        worksheet.getCell(`G${rowIndex}`).alignment = { horizontal: "right", vertical: "middle" };
+                        const descriptionValue = parseFloat(row[7]) || 0; // ตรวจสอบว่าเป็นตัวเลขหรือไม่
+                        worksheet.getCell(`H${rowIndex}`).value = descriptionValue;
+                        worksheet.getCell(`H${rowIndex}`).numFmt = '0.00'; // รูปแบบตัวเลข 2 ทศนิยม
+                        worksheet.getCell(`H${rowIndex}`).alignment = { horizontal: "right", vertical: "middle" };
 
-                        worksheet.getCell(`H${rowIndex}`).value = row[7]; // Unit
-                        worksheet.getCell(`I${rowIndex}`).value = row[8]; // ReqDate
-                        worksheet.getCell(`J${rowIndex}`).value = row[9]; // Reason
-                        worksheet.getCell(`K${rowIndex}`).value = row[10]; // Status
-                        worksheet.getCell(`L${rowIndex}`).value = row[11]; // Remark
+                        worksheet.getCell(`I${rowIndex}`).value = row[8]; // Unit
+                        worksheet.getCell(`J${rowIndex}`).value = row[9]; // ReqDate
+                        worksheet.getCell(`K${rowIndex}`).value = row[10]; // Reason
+                        worksheet.getCell(`L${rowIndex}`).value = row[11]; // Status
+                        worksheet.getCell(`M${rowIndex}`).value = row[12]; // Remark
 
                         // worksheet.getRow(rowIndex).alignment = { horizontal: "left", vertical: "middle" };
 

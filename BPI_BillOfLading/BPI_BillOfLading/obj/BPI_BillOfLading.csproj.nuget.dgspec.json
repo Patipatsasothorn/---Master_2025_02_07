@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\SCAN\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {}
+    "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {}
   },
   "projects": {
-    "D:\\SCAN\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {
+    "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SCAN\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
+        "projectUniqueName": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
         "projectName": "BPI_BillOfLading",
-        "projectPath": "D:\\SCAN\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
+        "projectPath": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
         "packagesPath": "C:\\Users\\BPI099\\.nuget\\packages\\",
-        "outputPath": "D:\\SCAN\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\obj\\",
+        "outputPath": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

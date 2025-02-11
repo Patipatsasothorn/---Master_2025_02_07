@@ -3730,3 +3730,4 @@ D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLad
 D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Debug\net8.0\BPI_BillOfLading.genruntimeconfig.cache
 D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Debug\net8.0\ref\BPI_BillOfLading.dll
 D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\เบิกของ\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Debug\net8.0\BPI_BillOfLading.sourcelink.json

@@ -30,7 +30,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background: linear-gradient(to bottom, #f6bf0f 85%, #f9d221 15%);">
             <div class="container-fluid">
                 <a class="navbar-brand" @* asp-area="" asp-controller="Home" asp-action="Index">BPI_ManageTransport_New *@>
-                    <small style="font-family: Kanit; font-size: 28px; color: #000 ">
+                    <small style="font-family: Nunito; font-size: 28px; color: #000 ">
                         @{
                             var controller = ViewContext.RouteData.Values["controller"].ToString();
                             string title = "";
@@ -40,36 +40,41 @@
                                 case "Holiday":
                                     title = "ตารางวันหยุดบริษัท";
                                     break;
+
                                 case "PickUp":
-                                    title = "เบิกของ";
+                                    title = "เบิกของ | ";
                                     break;
+
                                 case "Approve":
-                                    title = "อนุมัติ";
+                                    title = "อนุมัติ | ";
                                     break;
                                 case "StockOut":
-                                    title = "จ่ายของ";
+                                    title = "จ่ายของ | ";
                                     break;
                                 case "UserSettings":
-                                    title = "จัดการข้อมูล";
+                                    title = "จัดการข้อมูล | ";
                                     break;
                                 case "ReportPickUp":
-                                    title = "รายงานการเบิกของ";
+                                    title = "รายงานการเบิกของ | ";
                                     break;
                                 case "ReportStockOut":
-                                    title = "รายงานการจ่ายของ";
+                                    title = "รายงานการจ่ายของ | ";
                                     break;
                                 case "ReturnStock":
-                                    title = "ระบบคืนของ";
+                                    title = "ระบบคืนของ | ";
                                     break;
                                 case "ReportReturnStock":
-                                    title = "รายงานการคืนของ";
+                                    title = "รายงานการคืนของ | ";
                                     break;
                                 default:
-                                    title = "ระบบจัดการข้อมูล";
+                                    title = "ระบบจัดการข้อมูล | ";
                                     break;
                             }
                         }
                         @title
+                        <span style="font-size: 14px; color: gray;">
+                            company : @ViewBag.Company username : @ViewBag.Username
+                        </span>
                     </small>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -100,7 +105,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container-fluid">
-            &copy; v.24.0.1 - BPI_BillOfLading - พัฒนาโดย ทีมโปรแกรมเมอร์ BPI
+            &copy; v.24.0.2 - BPI_BillOfLading - พัฒนาโดย ทีมโปรแกรมเมอร์ BPI
         </div>
     </footer>
 
