@@ -917,7 +917,7 @@
                     var today = new Date();
                     var docDate = new Date($('#Datedoc2').val());
                     var docNumber = $('#docNumber').val();
-                    var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+                    const username = sessionStorage.getItem('username');
                     var selectedWHCode = $('#WareHouse').text();
                     $.ajax({
                         url: '/StockOut/Holiday',

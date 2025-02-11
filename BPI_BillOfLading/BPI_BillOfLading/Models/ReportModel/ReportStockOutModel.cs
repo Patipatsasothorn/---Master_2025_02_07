@@ -2,6 +2,7 @@
 {
     public class ReportStockOutModel
     {
+        public string PaidDate { get; set; }              // วันที่เบิก
         public string DocDate { get; set; }              // วันที่เบิก
         public long DocID { get; set; }   // เลขที่ใบเบิก
         public string DepName { get; set; }       // แผนก
@@ -15,5 +16,7 @@
         public string Description { get; set; }           // เหตุผลในการเบิก
         //public string Status { get; set; }           // สถานะเอกสาร
         public string Remark { get; set; }             // หมายเหตุ
+        public string UserNameStock { get; set; }             // หมายเหตุ
+        public string UserNamePick { get; set; }             // หมายเหตุ
     }
 }

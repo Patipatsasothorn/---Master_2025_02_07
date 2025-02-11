@@ -1,37 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|d:\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - master_2025_02_07\\bpi_billoflading\\bpi_billoflading\\views\\reportstockout\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|solutionrelative:bpi_billoflading\\views\\reportstockout\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Views\\ReportStockOut\\Index.cshtml",
-              "RelativeDocumentMoniker": "BPI_BillOfLading\\Views\\ReportStockOut\\Index.cshtml",
-              "ToolTip": "D:\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Views\\ReportStockOut\\Index.cshtml",
-              "RelativeToolTip": "BPI_BillOfLading\\Views\\ReportStockOut\\Index.cshtml",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAAAHoAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-11T03:36:32.181Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }

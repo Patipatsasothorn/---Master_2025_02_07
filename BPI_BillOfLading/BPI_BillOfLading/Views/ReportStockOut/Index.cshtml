@@ -221,6 +221,8 @@
                                 '<td>' + item.docDate + '</td>' +
                                 '<td>' + item.docID + '</td>' +
                                 '<td>' + item.depName + '</td>' +
+                                '<td>' + item.userNameStock + '</td>' +
+                                '<td>' + item.userNamePick + '</td>' +
                                 '<td>' + item.wareHouse + '</td>' +
                                 '<td>' + item.bin + '</td>' +
                                 '<td>' + item.partNum + '</td>' +
@@ -299,19 +301,19 @@
             const data = table.rows().data().toArray();
 
             // กำหนด Header สำหรับไฟล์ Excel
-            worksheet.mergeCells("A1:N1");
+            worksheet.mergeCells("A1:P1");
             const headerCell = worksheet.getCell("A1");
             headerCell.value = company;
             headerCell.font = { bold: true, size: 14 };
             headerCell.alignment = { horizontal: "center", vertical: "middle" };
 
-            worksheet.mergeCells("A2:N2");
+            worksheet.mergeCells("A2:P2");
             const plantCell = worksheet.getCell("A2");
             plantCell.value = `โรงงาน : ${plant}`;
             plantCell.font = { bold: true, size: 12 };
             plantCell.alignment = { horizontal: "center", vertical: "middle" };
 
-            worksheet.mergeCells("A3:N3");
+            worksheet.mergeCells("A3:P3");
             const messageTop = worksheet.getCell("A3");
             messageTop.value = `จากวันที่ : ${beginDate} - ${endDate}`;
             messageTop.font = { bold: true, size: 12 };
@@ -322,13 +324,15 @@
                 { key: "docDate", width: 15 },
                 { key: "docID", width: 18 },
                 { key: "index", width: 8 },
-                { key: "depName", width: 13 },
+                { key: "depName", width: 10 },
+                { key: "userNameStock", width: 10 },
+                { key: "userNamePick", width: 10 },
                 { key: "wareHouse", width: 7 },
                 { key: "bin", width: 9 },
-                { key: "partNum", width: 28.24 },
+                { key: "partNum", width: 20 },
                 { key: "partDescription", width: 66.56 },
                 { key: "qty", width: 14 },
-                { key: "unit", width: 12 },
+                { key: "unit", width: 10 },
                 { key: "reqDate", width: 12 },
                 { key: "reason", width: 25 },
                 { key: "remark", width: 39 },
@@ -341,6 +345,8 @@
                 "เลขที่ใบเบิก",
                 "รายการ",
                 "แผนก",
+                "ชื่อผู้จ่าย",
+                "ชื่อผู้เบิก",
                 "คลัง",
                 "bin",
                 "รหัสสินค้า",
@@ -397,21 +403,24 @@
                             worksheet.getCell(`D${rowIndex}`).alignment = { horizontal: "center", vertical: "middle" };
 
                             worksheet.getCell(`E${rowIndex}`).value = row[4]; // Dep
-                            worksheet.getCell(`F${rowIndex}`).value = row[5]; // Part Number
-                            worksheet.getCell(`G${rowIndex}`).value = row[6]; // Part Description
+                            worksheet.getCell(`F${rowIndex}`).value = row[5]; // UserStock
+                            worksheet.getCell(`G${rowIndex}`).value = row[6]; // UserPick
                             worksheet.getCell(`H${rowIndex}`).value = row[7]; // Warehouse
                             worksheet.getCell(`I${rowIndex}`).value = row[8]; // Bin
+                            worksheet.getCell(`J${rowIndex}`).value = row[9]; // Part Number
+                            worksheet.getCell(`K${rowIndex}`).value = row[10]; // Part Description
+
 
                             // จำนวนที่จ่าย (Qty) แปลงเป็นตัวเลขและตั้งค่าการจัดรูปแบบ
-                            const qtyValue = Number(row[9]) || 0;
-                            worksheet.getCell(`J${rowIndex}`).value = qtyValue;
-                            worksheet.getCell(`J${rowIndex}`).numFmt = '0.00';
-                            worksheet.getCell(`J${rowIndex}`).alignment = { horizontal: "right", vertical: "middle" };
+                            const qtyValue = Number(row[11]) || 0;
+                            worksheet.getCell(`L${rowIndex}`).value = qtyValue;
+                            worksheet.getCell(`L${rowIndex}`).numFmt = '0.00';
+                            worksheet.getCell(`L${rowIndex}`).alignment = { horizontal: "right", vertical: "middle" };
 
-                            worksheet.getCell(`K${rowIndex}`).value = row[10]; // Unit
-                            worksheet.getCell(`L${rowIndex}`).value = row[11]; // ReqDate
-                            worksheet.getCell(`M${rowIndex}`).value = row[12]; // Reason
-                            worksheet.getCell(`N${rowIndex}`).value = row[13]; // Remark
+                            worksheet.getCell(`M${rowIndex}`).value = row[12]; // Unit
+                            worksheet.getCell(`N${rowIndex}`).value = row[13]; // ReqDate
+                            worksheet.getCell(`O${rowIndex}`).value = row[14]; // Reason
+                            worksheet.getCell(`P${rowIndex}`).value = row[15]; // Remark
 
                             rowIndex++;
                             counter++;

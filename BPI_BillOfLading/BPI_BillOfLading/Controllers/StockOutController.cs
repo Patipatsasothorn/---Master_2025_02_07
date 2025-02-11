@@ -88,11 +88,18 @@ namespace BPI_BillOfLading.Controllers
         [HttpGet("StockOut/Privacy/{docId?}")]
         public IActionResult Privacy(string docId, string date, string Status, string UserName, string Company)
         {
+            // ดึงค่าจาก Session
+            var company = HttpContext.Session.GetString("Company");
+            var user = HttpContext.Session.GetString("User");
+
             ViewData["docId"] = docId;
             ViewData["date"] = date;
             ViewData["Status"] = Status;
             ViewData["UserName"] = UserName;
             ViewData["Company"] = Company;
+
+            ViewBag.Company = company;
+            ViewBag.Username = user;
 
             return View();
         }

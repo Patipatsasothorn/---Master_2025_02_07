@@ -2800,3 +2800,4 @@ D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLad
 D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Release\net8.0\BPI_BillOfLading.pdb
 D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Release\net8.0\BPI_BillOfLading.genruntimeconfig.cache
 D:\SCAN\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Release\net8.0\ref\BPI_BillOfLading.dll
+D:\เบิกของ\เบิกของ - Master_2025_02_07\BPI_BillOfLading\BPI_BillOfLading\obj\Release\net8.0\BPI_BillOfLading.sourcelink.json
