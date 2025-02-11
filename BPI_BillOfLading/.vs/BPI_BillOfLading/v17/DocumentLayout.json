@@ -1,12 +1,58 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\",
-  "Documents": [],
+  "WorkspaceRootPath": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|d:\\kew\\---master_2025_02_07\\bpi_billoflading\\bpi_billoflading\\views\\returnstock\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|solutionrelative:bpi_billoflading\\views\\returnstock\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|d:\\kew\\---master_2025_02_07\\bpi_billoflading\\bpi_billoflading\\views\\stockout\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|solutionrelative:bpi_billoflading\\views\\stockout\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Views\\ReturnStock\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "BPI_BillOfLading\\Views\\ReturnStock\\Privacy.cshtml",
+              "ToolTip": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Views\\ReturnStock\\Privacy.cshtml",
+              "RelativeToolTip": "BPI_BillOfLading\\Views\\ReturnStock\\Privacy.cshtml",
+              "ViewState": "AgIAAIYDAAAAAAAAAAAAwKQDAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-11T07:14:14.457Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Views\\StockOut\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "BPI_BillOfLading\\Views\\StockOut\\Privacy.cshtml",
+              "ToolTip": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Views\\StockOut\\Privacy.cshtml",
+              "RelativeToolTip": "BPI_BillOfLading\\Views\\StockOut\\Privacy.cshtml",
+              "ViewState": "AgIAAHoEAAAAAAAAAAAQwJsEAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-02-11T07:08:40.745Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

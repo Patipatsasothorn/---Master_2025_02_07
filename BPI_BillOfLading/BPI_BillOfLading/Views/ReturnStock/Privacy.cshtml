@@ -915,7 +915,7 @@
             function generateCSV(paidIds) {
                 // กำหนด header ตามที่ต้องการ
                 var header = ["Company", "Plant", "Trandate", "PartNum", "TranQTY", "UM", "ToWarehouseCode", "ToBinNum", "LotNum", "ReasonCode", "TranReference"];
-
+                var BEcuse = $('#BEcuse').val();
                 // จัดรูปแบบข้อมูลให้ตรงกับ header
                 var rows = paidIds.map(item => [
                     item.Company || "",
@@ -928,7 +928,7 @@
                     item.bin || "",
                     item.lotnum || "",
                     item.ReasonCode || "",
-                    item.returnID+"/"+item.PaidID + "/" + item.DetailID + "/" + item.DOCID || ""
+                    item.PaidID + "/" + item.DetailID + "/" + item.DOCID + "/" + BEcuse || ""
                 ]);
 
                 // รวม header และ rows เป็น CSV

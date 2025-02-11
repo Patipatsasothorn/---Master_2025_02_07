@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BPI_BillOfLading")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d5f93c3f0b3d8d26943a55936b1f4c9444879013")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4a1115d2a3b563d33e9cf5ac278ae19a025460a7")]
 [assembly: System.Reflection.AssemblyProductAttribute("BPI_BillOfLading")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BPI_BillOfLading")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

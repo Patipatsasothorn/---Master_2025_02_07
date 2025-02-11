@@ -1,31 +1,34 @@
 {
   "format": 1,
   "restore": {
-    "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {}
+    "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {}
   },
   "projects": {
-    "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {
+    "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
+        "projectUniqueName": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
         "projectName": "BPI_BillOfLading",
-        "projectPath": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
-        "packagesPath": "C:\\Users\\BPI099\\.nuget\\packages\\",
-        "outputPath": "D:\\เบิกของ\\เบิกของ - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\obj\\",
+        "projectPath": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\BPI_BillOfLading.csproj",
+        "packagesPath": "C:\\Users\\USER069\\.nuget\\packages\\",
+        "outputPath": "D:\\Kew\\---Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\BPI099\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\USER069\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
