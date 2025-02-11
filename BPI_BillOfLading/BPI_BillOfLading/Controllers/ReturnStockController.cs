@@ -51,19 +51,42 @@ namespace BPI_BillOfLading.Controllers
             _RTBLStock = rtBLStock;
 
         }
-
-        public IActionResult Index(string username, string Company)
+        public IActionResult Index(string Company, string UserName)
         {
-            if (string.IsNullOrEmpty(username))
+            //var company = HttpContext.Session.GetString("Company");
+            //var username = HttpContext.Session.GetString("UserName");
+
+            if (string.IsNullOrEmpty(UserName))
             {
-                return Redirect("https://webapp.bpi-concretepile.co.th:9020/Account/Login");
+                return Redirect("https://webapp.bpi-concretepile.co.th:14002/Account/Login");
             }
 
-            ViewBag.Username = username;
-            ViewBag.Company = Company;
+            HttpContext.Session.SetString("Company", Company);
+            HttpContext.Session.SetString("User", UserName);
 
-            return View();
+            return RedirectToAction("RenderLoadingScreen");
         }
+        public IActionResult RenderLoadingScreen()
+        {
+            // ดึงค่าจาก Session
+            var company = HttpContext.Session.GetString("Company");
+            var user = HttpContext.Session.GetString("User");
+
+            // ตรวจสอบว่าข้อมูลใน Session ถูกต้อง
+            if (string.IsNullOrWhiteSpace(company) || string.IsNullOrWhiteSpace(user))
+            {
+                return Redirect("https://webapp.bpi-concretepile.co.th:14002/#/authen");
+            }
+
+            ViewBag.Company = company;
+            ViewBag.Username = user;
+
+            //ViewData["Company"] = company;
+            //ViewData["User"] = user;
+
+            return View("Index");
+        }
+
 
         [HttpGet("ReturnStock/Privacy/{docId?}")]
         public IActionResult Privacy(string docId, string date, string Status, string UserName, string Company)

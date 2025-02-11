@@ -239,8 +239,10 @@
                 var dateDog = "@ViewData["date"]"
                 var docNumber = $('#docNumber').val();
                 var WHCode = $('#docStatus').val();
-                var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
-                var Company = '@ViewBag.Company';
+                const username = sessionStorage.getItem('username');
+                const Company = sessionStorage.getItem('Company');
+                // var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+                // var Company = '@ViewBag.Company';
                   // ส่งค่า docNumber ไปยัง Endpoint
                    // ส่งค่า docNumber ไปยัง Endpoint
 
@@ -419,8 +421,8 @@
                     });
                 }
                 function fetchTableBill(selectedWHCode) {
-        var Company = '@ViewBag.Company';
-
+        // var Company = '@ViewBag.Company';
+            const Company = sessionStorage.getItem('Company');
         $.ajax({
             url: '/ReturnStock/TableBill',
             method: 'GET',
@@ -765,7 +767,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 var docNumber = $('#docNumber').val();
-                var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+               const username = sessionStorage.getItem('username');
                 var selectedWHCode = $('#WareHouse').text();
 
                 var isQtyExceed = false;
@@ -931,6 +933,7 @@
 
                 // รวม header และ rows เป็น CSV
                 let csvContent = [header.join(","), ...rows.map(row => row.join(","))].join("\n");
+
                 // var company = '@ViewBag.Company';
                  const company = sessionStorage.getItem('Company');
                      // ดึงวันที่ปัจจุบันในรูปแบบ YYYYMMDD_HHmmss
@@ -999,8 +1002,9 @@
         $(window).on('load', function () {
             var docNumber = $('#docNumber').val();
             var WHCode = $('#docStatus').val();
-            var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
-            var Company = '@ViewBag.Company';
+            const username = sessionStorage.getItem('username');
+            const Company = sessionStorage.getItem('Company');
+
 
             $.ajax({
                 url: '/ReturnStock/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
@@ -1049,7 +1053,7 @@
                 }
             });
             var statusFromServer = '@ViewData["Status"]';
-            var Company = '@ViewBag.Company';
+            const Company = sessionStorage.getItem('Company');
 
             $.ajax({
                 url: '/ReturnStock/WHDescription',
@@ -1136,8 +1140,7 @@
                 });
             }
     function fetchTableBill(selectedWHCode) {
-        var Company = '@ViewBag.Company';
-
+      const Company = sessionStorage.getItem('Company');
         $.ajax({
             url: '/ReturnStock/TableBill',
             method: 'GET',

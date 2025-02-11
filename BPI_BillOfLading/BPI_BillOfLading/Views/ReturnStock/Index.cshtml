@@ -167,11 +167,20 @@
 
                 var docId = $(this).find('td').eq(1).text();  // ดึงค่า column ที่ 2 (docId)
                 var Status = $(this).find('td').eq(4).text();  // ดึงค่า column ที่ 2 (docId)
+                  if (docId) {
+                    // เก็บข้อมูลใน sessionStorage
+                    sessionStorage.setItem('docId', docId);
+                    sessionStorage.setItem('date', formattedDate);
+                    sessionStorage.setItem('username', username);
+                    sessionStorage.setItem('Company', Company);
 
-                if (docId) {
-                    // Redirect ไปยังหน้า Privacy และส่ง docId กับ date ผ่าน query string
-                    window.open('/ReturnStock/Privacy?docId=' + encodeURIComponent(docId) + '&date=' + encodeURIComponent(formattedDate) + '&username=' + encodeURIComponent(username) + '&Company=' + encodeURIComponent(Company));
+                    // Redirect ไปยังหน้า Privacy
+                    window.open('/StockOut/Privacy');
                 }
+                // if (docId) {
+                //     // Redirect ไปยังหน้า Privacy และส่ง docId กับ date ผ่าน query string
+                //     window.open('/ReturnStock/Privacy?docId=' + encodeURIComponent(docId) + '&date=' + encodeURIComponent(formattedDate) + '&username=' + encodeURIComponent(username) + '&Company=' + encodeURIComponent(Company));
+                // }
             });
         });
 
