@@ -1,0 +1,450 @@
+﻿@{
+    ViewData["Title"] = "รายงานการจ่ายของ";
+}
+
+@{
+    <style>
+        /* .bootstrap-select .dropdown-toggle .filter-option {
+                                                                                                                        padding: 8px 12px;
+                                                                                                                    } */
+
+        .bootstrap-select .dropdown-toggle {
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+        }
+
+        /* .bootstrap-select .dropdown-menu {
+                                                                                                border: 1px solid #ccc !important;
+                                                                                                border-radius: 4px !important;
+                                                                                                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+                                                                                                width: 100% !important;
+                                                                                                max-width: 100% !important;
+                                                                                            } */
+
+        .bootstrap-select.show .dropdown-toggle {
+            border-color: #66afe9 !important;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef; /* Light gray background */
+            cursor: not-allowed; /* Shows a not-allowed cursor */
+        }
+
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table {
+            font-size: 14px;
+        }
+
+        /* ปรับระยะห่างระหว่างการค้นหากับตาราง */
+        .dataTables_filter {
+            margin-bottom: 20px; /* เพิ่มระยะห่างระหว่าง search box และตาราง */
+        }
+
+    </style>
+}
+
+<div class="container-fluid mb-4" style="font-family: Kanit;">
+    <div class="card">
+        <div class="card-body" style="font-size: 15px;">
+            <form id="form">
+                <div class="row mb-3 form-row">
+                    <label class="col-sm-1 col-form-label">บริษัท : </label>
+                    <div class="col-sm-3">
+                        <select id="company" class="form-control selectpicker">
+                            <option value="BPI">บริษัท บางปะอิน เสาเข็มคอนกรีต จำกัด</option>
+                            <option value="SAC">บริษัท ศรีอยุธยา คอนกรีต จำกัด</option>
+                            <option value="S145">บริษัท 145 ศรีอยุธยาคอนกรีต จำกัด</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3 form-row">
+                    <label class="col-sm-1 col-form-label">โรงงาน : </label>
+                    <div class="col-sm-3">
+                        <select id="plant" class="form-control selectpicker">
+                            <option disabled selected>--- เลือกข้อมูล ---</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3 form-row">
+                    <label class="col-sm-1 col-form-label">วันที่ : </label>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <input id="beginDate" type="text" class="form-control">
+                            <span class="input-group-text" id="datepickerIcon1" style="cursor: pointer;">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <label class="col-sm-1 col-form-label text-center">ถึงวันที่ : </label>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <input id="endDate" type="text" class="form-control">
+                            <span class="input-group-text" id="datepickerIcon2" style="cursor: pointer;">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มแสดงข้อมูล (จัดตำแหน่งให้ขวาสุด) -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" id="showDataBtn" class="btn btn-primary">
+                        แสดงข้อมูล
+                    </button>
+
+                    <button id="exportToExcelBtn" class="btn btn-success" disabled="true">
+                        <i class="fa-solid fa-file-excel"></i> Export to Excel
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="dtTable" class="table-responsive container-fluid mt-4" style="display: none;">
+    <h4 class="">รายละเอียดของที่คืน</h4>
+    <table id="reportTable" class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ลำดับ</th>
+                <th>วันที่คืน</th>
+                <th>เลขที่ใบเบิก</th>
+                <th>แผนก</th>
+                <th>คลัง</th>
+                <th>Bin</th>
+                <th>รหัสสินค้า</th>
+                <th>รายละเอียด</th>
+                <th>จำนวนที่จ่าย</th>
+                <th>หน่วย</th>
+                <th style="display: none;">วันที่ต้องการ</th>
+                <th style="display:none">เหตุผลในการเบิก</th>
+                <th style="display: none;">หมายเหตุ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ข้อมูลจะแสดงที่นี่ -->
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#beginDate, #endDate').datepicker({
+            format: 'dd/mm/yyyy',
+            todayBtn: 'linked',
+            autoclose: true,
+            todayHighlight: true,
+            //startDate: new Date(),
+        }).datepicker('setDate', new Date());
+
+        $('#datepickerIcon1').on('click', function () {
+            $('#beginDate').datepicker('show');
+        });
+
+        $('#datepickerIcon2').on('click', function () {
+            $('#endDate').datepicker('show');
+        });
+
+        loadPlants();
+
+        function loadPlants() {
+            $.ajax({
+                url: '/ReportPickUp/GetPlants',
+                method: 'GET',
+                //data: { company: company },
+                success: function (response) {
+                    if (response.success) {
+                        $('#plant').empty();
+                        $('#plant').append('<option disabled selected>--- เลือกข้อมูล ---</option>');
+                        $('#plant').selectpicker('destroy');
+
+                        $.each(response.plants, function (index, plant) {
+                            $('#plant').append($('<option>', {
+                                value: plant.plant,
+                                text: plant.plant
+                            }));
+                        });
+                    }
+
+                    $('#plant').selectpicker();
+                },
+                error: function () {
+                    alert('เกิดข้อผิดพลาดในการดึงข้อมูลโรงงาน');
+                }
+            });
+        }
+
+        $('#showDataBtn').on('click', function () {
+            var company = $('#company').val();
+            var plant = $('#plant').val();
+            var beginDate = $('#beginDate').val();
+            var endDate = $('#endDate').val();
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/ReportReturnStock/GetData',
+                method: 'POST',
+                data: {
+                    company: company,
+                    plant: plant,
+                    beginDate: beginDate,
+                    endDate: endDate
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#dtTable').show();
+                        $('#exportToExcelBtn').prop('disabled', false);
+
+                        if ($.fn.DataTable.isDataTable('#reportTable')) {
+                            $('#reportTable').DataTable().destroy();
+                        }
+
+                        $('#reportTable tbody').empty();
+
+                        // เพิ่มข้อมูลใหม่ลงในตาราง
+                        $.each(response.pickUp, function (index, item) {
+                            var row = '<tr>' +
+                                '<td>' + (index + 1) + '</td>' +
+                                '<td>' + item.docDate + '</td>' +
+                                '<td>' + item.docID + '</td>' +
+                                '<td>' + item.depName + '</td>' +
+                                '<td>' + item.wareHouse + '</td>' +
+                                '<td>' + item.bin + '</td>' +
+                                '<td>' + item.partNum + '</td>' +
+                                '<td>' + item.partDescription + '</td>' +
+                                '<td style="text-align: right">' + item.qty + '</td>' +
+                                '<td>' + item.unit + '</td>' +
+                                '<td style="display: none;">' + item.reqDate + '</td>' +
+                                '<td style="display: none;"> ' + item.description + '</td>' +
+                                '<td style="display: none;">' + item.remark + '</td>' +
+                                '</tr>';
+                            $('#reportTable tbody').append(row);
+                        });
+
+                        // Initialize DataTable
+                        $('#reportTable').DataTable({
+                            responsive: true,
+                            paging: true,
+                            searching: true,
+                            ordering: true,
+                            pageLength: 10, // ตั้งค่าจำนวนแถวต่อหน้า
+                            lengthMenu: [10, 25, 50, 75, 100], // ตัวเลือกจำนวนแถวที่แสดง
+                            language: {
+                                search: "ค้นหา:",
+                                lengthMenu: "แสดง _MENU_ แถวต่อหน้า",
+                                info: "แสดง _START_ ถึง _END_ จาก _TOTAL_ แถว",
+                                infoEmpty: "ไม่มีข้อมูล",
+                                infoFiltered: "(จากทั้งหมด _MAX_ แถว)",
+                                paginate: {
+                                    previous: "ก่อนหน้า",
+                                    next: "ถัดไป"
+                                }
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'ไม่พบข้อมูล',
+                            text: response.message,
+                        });
+
+                        $('#dtTable').hide();
+                        $('#exportToExcelBtn').prop('disabled', true);
+
+                        if ($.fn.DataTable.isDataTable('#reportTable')) {
+                            $('#reportTable').DataTable().destroy();
+                        }
+
+                        $('#reportTable tbody').empty();
+                    }
+
+                    hideLoadingOverlay();
+                },
+                error: function () {
+                    hideLoadingOverlay();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้',
+                    });
+                }
+            });
+        });
+
+        $('#exportToExcelBtn').on('click', function (e) {
+            e.preventDefault();
+
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("รายงานการจ่ายของ");
+
+            const company = $('#company').find("option:selected").text() || "-";
+            const plant = $('#plant').find("option:selected").text() || "-";
+            const beginDate = $('#beginDate').val() || "-";
+            const endDate = $('#endDate').val() || "-";
+
+            const table = $('#reportTable').DataTable();
+            const data = table.rows().data().toArray();
+
+            // กำหนด Header สำหรับไฟล์ Excel
+            worksheet.mergeCells("A1:N1");
+            const headerCell = worksheet.getCell("A1");
+            headerCell.value = company;
+            headerCell.font = { bold: true, size: 14 };
+            headerCell.alignment = { horizontal: "center", vertical: "middle" };
+
+            worksheet.mergeCells("A2:N2");
+            const plantCell = worksheet.getCell("A2");
+            plantCell.value = `โรงงาน : ${plant}`;
+            plantCell.font = { bold: true, size: 12 };
+            plantCell.alignment = { horizontal: "center", vertical: "middle" };
+
+            worksheet.mergeCells("A3:N3");
+            const messageTop = worksheet.getCell("A3");
+            messageTop.value = `จากวันที่ : ${beginDate} - ${endDate}`;
+            messageTop.font = { bold: true, size: 12 };
+            messageTop.alignment = { horizontal: "center", vertical: "middle" };
+
+            worksheet.columns = [
+                { key: "docDate", width: 10 },
+                { key: "docID", width: 12.33 },
+                { key: "index", width: 8 },
+                { key: "depName", width: 13 },
+                { key: "wareHouse", width: 10 },
+                { key: "bin", width: 9 },
+                { key: "partNum", width: 28.24 },
+                { key: "partDescription", width: 66.56 },
+                { key: "qty", width: 14 },
+                { key: "unit", width: 6 },
+
+            ];
+
+            // กำหนดหัวตาราง
+            worksheet.addRow([
+                "วันที่คืน",
+                "เลขที่ใบเบิก",
+                "รายการ",
+                "แผนก",
+                "คลัง รับคืน",
+                "bin รับคืน",
+                "รหัสสินค้า",
+                "รายละเอียด",
+                "จำนวนที่คืน",
+                "หน่วย",
+            ]);
+
+            const headerRow = worksheet.getRow(4);
+            headerRow.font = { bold: true };
+            headerRow.alignment = { horizontal: "center", vertical: "middle" };
+
+            const groupedData = data.reduce((acc, row) => {
+                const docDate = row[1];
+                const docID = row[2];
+
+                if (!acc[docDate]) acc[docDate] = {};
+                if (!acc[docDate][docID]) acc[docDate][docID] = [];
+
+                acc[docDate][docID].push(row);
+
+                return acc;
+            }, {});
+
+            let rowIndex = 5;
+
+            Object.keys(groupedData).forEach(docDate => {
+
+                worksheet.getCell(`A${rowIndex}`).value = `${docDate}`;
+                worksheet.getCell(`A${rowIndex}`).font = { bold: true };
+                worksheet.getCell(`A${rowIndex}`).alignment = { horizontal: "left", vertical: "middle" };
+                rowIndex++;
+
+                Object.keys(groupedData[docDate]).forEach(docID => {
+
+                    worksheet.getCell(`B${rowIndex}`).value = `${docID}`;
+                    worksheet.getCell(`B${rowIndex}`).font = { bold: true };
+                    worksheet.getCell(`B${rowIndex}`).alignment = { horizontal: "left", vertical: "middle" };
+                    rowIndex++;
+
+                    let counter = 1;
+
+                    groupedData[docDate][docID].forEach(row => {
+                        worksheet.getCell(`C${rowIndex}`).value = counter; // ลำดับใน docDate นี้
+                        worksheet.getCell(`C${rowIndex}`).alignment = { horizontal: "center", vertical: "middle" };
+
+                        worksheet.getCell(`D${rowIndex}`).value = row[3]; // Dep
+                        worksheet.getCell(`E${rowIndex}`).value = row[4]; // Part Number
+                        worksheet.getCell(`F${rowIndex}`).value = row[5]; // Part Description
+                        worksheet.getCell(`G${rowIndex}`).value = row[6]; // Warehouse
+                        worksheet.getCell(`H${rowIndex}`).value = row[7]; // Bin
+
+                        // I: แปลงเป็นตัวเลข, กำหนดรูปแบบ และชิดขวา
+                        const descriptionValue = parseFloat(row[8]) || 0; // ตรวจสอบว่าเป็นตัวเลขหรือไม่
+                        worksheet.getCell(`I${rowIndex}`).value = descriptionValue;
+                        worksheet.getCell(`I${rowIndex}`).numFmt = '0.00'; // รูปแบบตัวเลข 2 ทศนิยม
+                        worksheet.getCell(`I${rowIndex}`).alignment = { horizontal: "right", vertical: "middle" };
+
+                        worksheet.getCell(`J${rowIndex}`).value = row[9]; // Unit
+                        //worksheet.getCell(`K${rowIndex}`).value = row[10]; // ReqDate
+                       // worksheet.getCell(`L${rowIndex}`).value = row[12]; // Reason
+                       // worksheet.getCell(`M${rowIndex}`).value = row[12]; // Remark
+
+                        //worksheet.getRow(rowIndex).alignment = { horizontal: "left", vertical: "middle" };
+
+                        rowIndex++; // เพิ่มแถวใน Excel
+                        counter++; // เพิ่มลำดับ
+                    });
+                });
+            });
+
+            workbook.xlsx.writeBuffer().then((buffer) => {
+                const blob = new Blob([buffer], { type: "application/octet-stream" });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `รายงานการคืนของ.xlsx`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+        });
+
+        function showLoadingOverlay() {
+            $.LoadingOverlay("show", {
+                image: "",
+                fontawesome: "fa-solid fa-spinner fa-spin",
+            });
+        }
+
+        function hideLoadingOverlay() {
+            $.LoadingOverlay("hide");
+        }
+
+        function checkFormCompletion() {
+            const company = $('#company').val();
+            const plant = $('#plant').val();
+            const beginDate = $('#beginDate').val();
+            const endDate = $('#endDate').val();
+
+            // เปิดใช้งานปุ่มถ้าข้อมูลครบถ้วน
+            if (company && plant && beginDate && endDate) {
+                $('#showDataBtn').prop('disabled', false);
+            } else {
+                $('#showDataBtn').prop('disabled', true);
+            }
+        }
+
+        $('#company, #plant, #beginDate, #endDate').on('change keyup', function () {
+            checkFormCompletion();
+        });
+
+        // เรียกใช้ฟังก์ชันตรวจสอบเมื่อโหลดหน้า
+        checkFormCompletion();
+    });
+</script>

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\BPI_PickUp.props" />
+</Project>

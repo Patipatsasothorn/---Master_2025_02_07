@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|d:\\scan\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - master_2025_02_07\\bpi_billoflading\\bpi_billoflading\\models\\reportmodel\\reportstockoutmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|solutionrelative:bpi_billoflading\\models\\reportmodel\\reportstockoutmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|d:\\scan\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - master_2025_02_07\\bpi_billoflading\\bpi_billoflading\\models\\reportmodel\\reportstockoutcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|solutionrelative:bpi_billoflading\\models\\reportmodel\\reportstockoutcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|d:\\scan\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - master_2025_02_07\\bpi_billoflading\\bpi_billoflading\\controllers\\reportstockoutcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B367657E-2ACC-4FBA-87FC-9A5E0DE6BDBB}|BPI_BillOfLading\\BPI_BillOfLading.csproj|solutionrelative:bpi_billoflading\\controllers\\reportstockoutcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ReportStockOutModel.cs",
+              "DocumentMoniker": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutModel.cs",
+              "RelativeDocumentMoniker": "BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutModel.cs",
+              "ToolTip": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutModel.cs",
+              "RelativeToolTip": "BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-10T10:14:38.472Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ReportStockOutContext.cs",
+              "DocumentMoniker": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutContext.cs",
+              "RelativeDocumentMoniker": "BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutContext.cs",
+              "ToolTip": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutContext.cs",
+              "RelativeToolTip": "BPI_BillOfLading\\Models\\ReportModel\\ReportStockOutContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-10T10:14:25.47Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ReportStockOutController.cs",
+              "DocumentMoniker": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Controllers\\ReportStockOutController.cs",
+              "RelativeDocumentMoniker": "BPI_BillOfLading\\Controllers\\ReportStockOutController.cs",
+              "ToolTip": "D:\\SCAN\\\u0E40\u0E1A\u0E34\u0E01\u0E02\u0E2D\u0E07 - Master_2025_02_07\\BPI_BillOfLading\\BPI_BillOfLading\\Controllers\\ReportStockOutController.cs",
+              "RelativeToolTip": "BPI_BillOfLading\\Controllers\\ReportStockOutController.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAkwEkAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-10T10:08:10.799Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

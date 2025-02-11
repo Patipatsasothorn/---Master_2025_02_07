@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>\\192.168.10.4\BPI_WarehouseManage.Web</_PublishTargetUrl>
+    <History>False|2025-02-10T08:03:30.6958484Z||;False|2025-02-10T15:02:00.5945881+07:00||;False|2025-02-10T15:01:23.4994258+07:00||;True|2025-02-10T14:23:12.6908823+07:00||;True|2025-02-10T11:58:10.4737259+07:00||;True|2025-02-10T11:19:20.5979292+07:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

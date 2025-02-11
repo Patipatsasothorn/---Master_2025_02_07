@@ -1,0 +1,1397 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+    DateTime? docDate = ViewData["date"] as DateTime?;
+    var Username = ViewBag.Username as string;
+    var Company = ViewBag.Company as string;
+    <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+
+}
+
+<style>
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .highlight-row {
+        background-color: #f8d7da; /* สีแดงอ่อน */
+    }
+
+    #qrcode-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+        #qrcode-popup > div {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+    #close-popup {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+    /* Style for the close button */
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent; /* No background */
+        border: none; /* No border */
+        cursor: pointer; /* Pointer on hover */
+        font-size: 24px; /* Increase icon size */
+        color: #ff5c5c; /* Set color to red */
+        transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    }
+
+        /* Hover effect */
+        .close-btn:hover {
+            color: #ff1c1c; /* Darker red on hover */
+            transform: scale(1.2); /* Slightly increase size on hover */
+        }
+
+        /* Focus effect for keyboard navigation */
+        .close-btn:focus {
+            outline: none; /* Remove default outline */
+            box-shadow: 0 0 0 3px rgba(255, 92, 92, 0.6); /* Custom focus outline */
+        }
+
+    .custom-btn {
+        background-color: #6c757d; /* สีเทา */
+        color: white;
+        border: none;
+        width: 100px; /* กำหนดขนาดปุ่มตามต้องการ */
+        height: 100px; /* ขยายความสูงของปุ่ม */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    .text-right {
+        text-align: right !important; /* เพิ่ม !important เพื่อให้มีลำดับความสำคัญสูง */
+    }
+
+    .custom-btn i {
+        font-size: 48px; /* ขยายขนาดไอคอน */
+    }
+
+    .custom-btn:hover {
+        background-color: #5a6268; /* สีเทาเข้มเมื่อ hover */
+    }
+    /* ซ่อนลูกศรแบบปกติ */
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,7" style="fill:black;"/></svg>') no-repeat right 10px center;
+        background-color: white; /* ตั้งค่าสีพื้นหลังตามต้องการ */
+        padding-right: 30px; /* เพิ่มช่องว่างสำหรับลูกศร */
+        border: 1px solid #ccc; /* ตั้งค่าเส้นขอบตามต้องการ */
+        border-radius: 4px; /* ตั้งค่ามุมโค้งมน */
+        width: 300px; /* ตั้งค่าความกว้าง */
+        height: 38px; /* ตั้งค่าความสูง */
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <!-- Card 1 -->
+    <div class="card">
+
+        <div class="card-body">
+            <!-- Buttons -->
+
+            <div class="d-flex justify-content-end">
+                <button id="approveBtn" type="button" class="btn btn-success me-2">
+                    <i class="fa-solid fa-check"></i> ยืนยันการรับคืน
+                </button>
+            </div>
+
+            <div id="status" data-status="@ViewData["Status"]"></div>
+
+            <div class="my-4">
+
+                <!-- Form Elements -->
+                <label for="docNumber" class="me-5">เลขที่เอกสาร:</label>
+                <div style="display: inline-flex; align-items: center;">
+                    <input type="text" id="docNumber" class="form-control" style="width: 300px; margin-right: -1px;" value="@ViewData["docId"]" />
+                    <button id="qrcode" type="button" class="btn btn-secondary me-5">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </button>
+                </div>
+
+
+
+                <button id="searchButton" type="button" class="btn btn-info me-5">
+                    <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
+                </button>
+
+                <label for="docDate" class="me-5">วันที่:</label>
+                <input type="text" id="docDate" class="form-control d-inline-block me-2" style="width: 200px; " value="@ViewData["date"]" disabled />
+
+
+                <label for="docStatus" class="me-5">คลัง:</label>
+                <select id="docStatus" class="form-control d-inline-block" style="width: 300px;">
+                </select>
+            </div>
+            <div class="my-4">
+                <!-- Form Elements -->
+                <label for="docNumber" style="margin-right: 89px;">เหตุผล:</label>
+                <input type="text" id="BE" class="form-control d-inline-block " style="width: 300px; margin-right: 110px;" disabled />
+
+
+
+                <label for="docDate" class="me-5">หน่วยงาน:</label>
+                <input type="text" id="dep" class="form-control d-inline-block me-4" style="width: 200px; " disabled />
+
+
+
+                <label for="docDate" class="me-2">วันที่ต้องการของ:</label>
+                <input type="text" id="Datedoc" class="form-control d-inline-block me-4" style="width: 200px;" disabled />
+
+            </div>
+            <div class="my-4">
+                <label for="BECU" class="me-2">หมายเหตุ</label>
+                <input type="text" id="BEcuse" class="form-control d-inline-block" style="width: 100%;" disabled />
+            </div>
+        </div>
+    </div>
+    <label id="DetailID" style="display:none"></label>
+    <label id="WareHouse" style="display:none"></label>
+    <label id="hasPermission" style="display:none">false</label>
+    <label id="tabletotalQty" style="display:none;"></label>
+    <label id="countmultilot" style="display:none;"></label>
+    <label id="totallot" style="display:none;"></label>
+    <label id="part" style="display:none;"></label>
+
+    <!-- Spacer -->
+    <div class="my-4"></div>
+
+    <!-- Card 2 -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">ตารางข้อมูล</h5>
+            <div class="table-responsive">
+                <table id="dataTable" class="table table-bordered table-primary">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">Part num</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 200px;">Description</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px;">Lotnum</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px;">จำนนวนที่จ่าย</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px;">หน่วยที่จ่าย</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px;">BIN</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px;">จำนวนที่คืน</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px;">หน่วยที่คืน</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">PaidID</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">DetailID</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">Plant</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">ReasonCode</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">Convert</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">ค่าหลังแปลง</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+                            <th style="width: 100px; display:none">Coond</th> <!-- กำหนดขนาดของคอลัมน์นี้ -->
+
+                        </tr>
+                    </thead>
+                    <tbody class="table table-bordered table-Success">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- QR Code Scanner Popup -->
+    <div id="qrcode-popup" style="display: none;">
+        <div style="position: relative; width: 100%; max-width: 600px; margin: auto; padding: 20px; background-color: white; border: 1px solid #ddd; border-radius: 8px;">
+            <button id="close-popup" class="close-btn">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <div id="qrcode-reader" style="width: 90%; height: 400px;"></div>
+        </div>
+    </div>
+    <input id="Datedoc2" hidden />
+</div>
+
+<script>
+        $(document).ready(function () {
+
+            $('#searchButton').click(function () {
+
+                // เคลียร์ข้อมูลทั้งหมดก่อนทำการค้นหาใหม่
+                $('#BE').val('');
+                $('#dep').val('');
+                $('#Plant').val('');
+                $('#Datedoc').val('');
+                $('#BEcuse').val('');
+                $('#docDate').val('');
+                $('#docStatus').val('');
+                var dateDog = "@ViewData["date"]"
+                var docNumber = $('#docNumber').val();
+                var WHCode = $('#docStatus').val();
+                var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+                var Company = '@ViewBag.Company';
+                  // ส่งค่า docNumber ไปยัง Endpoint
+                   // ส่งค่า docNumber ไปยัง Endpoint
+
+                            var tableBody = $('#dataTable tbody');
+                            tableBody.empty();
+        $.ajax({
+            url: '/ReturnStock/status', // URL ของ Endpoint
+            method: 'GET',
+            data: { Description: docNumber }, // ส่งค่า Description = docNumber
+            success: function (response) {
+                // ตรวจสอบว่าผลลัพธ์ว่างหรือไม่
+                if (!response || response.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่พบข้อมูล',
+                        text: `หมายเลขเอกสาร "${docNumber}" นี้ยังไม่ได้จ่ายครับ` // แสดงค่า docNumber
+                    });
+                    return; // หยุดการทำงานต่อ
+                }
+
+                // หากมีข้อมูลใน response
+                console.log(response); // ตรวจสอบข้อมูลที่ได้
+                Swal.fire({
+                    icon: 'success',
+                    title: 'ค้นหาสำเร็จ',
+                    text: `พบข้อมูลสำหรับหมายเลขเอกสาร "${docNumber}"`
+                });
+                 $.ajax({
+                    url: '/ReturnStock/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                    method: 'GET',
+                    data: {
+                        docNumber: docNumber,
+                        WHCode: "",
+                        Company: Company
+                    },
+                    success: function (response) {
+                        // เก็บข้อมูลที่ได้จากการค้นหาไว้ในตัวแปร BE
+                        $('#BE').val(response[0].description);
+                        $('#dep').val(response[0].depName);
+                        $('#Plant').val(response[0].name);
+                        // ดึงค่าจาก response และตัดข้อความตั้งแต่ T เป็นต้นไป
+                        var reqDate = response[0].reqDate.split('T')[0]; // ได้ค่า "2024-12-23"
+
+                        // แยกปี เดือน วันออกจากกัน
+                        var parts = reqDate.split('-'); // ["2024", "12", "23"]
+                        var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0]; // "23/12/2024"
+                        $('#Datedoc2').val(response[0].reqDate);
+
+                        // แสดงผลใน input
+                        $('#Datedoc').val(formattedDate);
+                        $('#BEcuse').val(response[0].remark);
+                        $('#DetailID').text(response[0].detailID);
+                        // ดึงค่าจาก response และตัดข้อความตั้งแต่ T เป็นต้นไป
+                        var docDate = response[0].docDate.split('T')[0]; // ได้ค่า "2024-12-23"
+
+                        // แยกปี เดือน วันออกจากกัน
+                        var pratsdocDate = docDate.split('-'); // ["2024", "12", "23"]
+                        var formatteddocDate = pratsdocDate[2] + '/' + pratsdocDate[1] + '/' + pratsdocDate[0]; // "23/12/2024"
+                        $('#docDate').val(formatteddocDate);
+
+                        var BE = response;
+
+                        // ทดสอบการแสดงข้อมูล BE
+                        console.log('ข้อมูลที่ได้จาก BillOfLading:', BE);
+
+                        // คุณสามารถดำเนินการเพิ่มเติมกับข้อมูลที่เก็บใน BE ได้ที่นี่
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching BillOfLading data:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'ไม่พบข้อมูล GetBillOfLading'
+                        });
+                        hideLoadingOverlay();
+                    },
+                    complete: function () {
+                        hideLoadingOverlay();
+                    }
+                });
+                var statusFromServer = '@ViewData["Status"]';
+
+                $.ajax({
+                    url: '/ReturnStock/WHDescription',
+                    type: 'GET',
+                    data: {
+                        docNumber: docNumber,
+                        Company: Company
+                    },
+                    success: function (data) {
+                        $('#docStatus').empty(); // ล้าง dropdown
+
+                        // เพิ่มตัวเลือกใน dropdown
+                        $.each(data, function (index, item) {
+                            $('#docStatus').append(
+                                $('<option>', { value: item.description }).text(item.description)
+                            );
+                        });
+
+                        // ตั้งค่า ViewData["Status"] เป็นค่าเริ่มต้น
+                        $('#docStatus option').each(function () {
+                            if ($(this).val() === statusFromServer) {
+                                $(this).prop('selected', true);
+                                $('#docStatus').focus();
+                            }
+                        });
+
+                        // ตรวจสอบสิทธิ์โดยใช้ docStatus
+                        const selectedDocStatus = $('#docStatus').val();
+                        validateWarehousePermission(username, selectedDocStatus);
+
+                        // เรียกข้อมูลคลังสินค้า
+                        fetchWarehouseData(selectedDocStatus);
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'ไม่สามารถดึงข้อมูลได้', 'error');
+                    }
+                });
+                // สามารถดำเนินการต่อได้ตามต้องการ
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถเรียกดูข้อมูลได้'
+                });
+            }
+        });
+
+
+                // ฟังก์ชันตรวจสอบสิทธิ์
+                function validateWarehousePermission(username, docStatus) {
+                    $.ajax({
+                        url: '/ReturnStock/BPI_BillOfLoading_Wh',
+                        type: 'GET',
+                        data: { username: username },
+                        success: function (data) {
+                            const hasPermission = data.some(item => item.description === docStatus);
+                            $('#hasPermission').text(hasPermission ? 'true' : 'false');
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'ไม่สามารถตรวจสอบสิทธิ์ได้', 'error');
+                        }
+                    });
+                }
+
+
+                // Function สำหรับดึงข้อมูล `allWH` ตามค่า `Description`
+                function fetchWarehouseData(description) {
+                    $.ajax({
+                        url: '/ReturnStock/WHCODE',
+                        type: 'GET',
+                        data: { Description: description }, // ส่ง Description ที่ถูกเลือกไปยัง API
+                        success: function (data) {
+                            // ล้าง Dropdown ก่อน
+                            $('#WareHouse').empty();
+
+                            // วนลูปข้อมูลที่ได้จาก API เพื่อเพิ่มข้อมูลลงใน Dropdown
+                            $.each(data, function (index, item) {
+                                $('#WareHouse').append(
+                                    $('<option>', { value: item.warehouseCode })
+                                        .text(item.warehouseCode)
+                                );
+                            });
+
+                            // หลังจากโหลด `#WareHouse` เสร็จสิ้น ให้ดึงข้อมูล TableBill โดยใช้ WHCode ตัวแรกใน Dropdown
+                            const selectedWHCode = $('#WareHouse').text(); // ค่าของ WHCode ที่เลือกแรก
+                            if (selectedWHCode) {
+                                // fetchBillOfLading(docNumber, selectedWHCode);
+                                fetchTableBill(selectedWHCode);
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'ไม่สามารถดึงข้อมูล WHCODE ได้', 'error');
+                        }
+                    });
+                }
+                function fetchTableBill(selectedWHCode) {
+        var Company = '@ViewBag.Company';
+
+        $.ajax({
+            url: '/ReturnStock/TableBill',
+            method: 'GET',
+            data: {
+                docNumber: docNumber,
+                WHCode: selectedWHCode,
+                Company: Company
+            },
+            success: function (response) {
+                 var allReturnQtyNonZero = true; // ตัวแปรเพื่อตรวจสอบว่าไม่มีค่า returnQTY เป็น 0
+
+                // ลบ DataTable เก่า (ถ้ามี)
+                if ($.fn.DataTable.isDataTable('#dataTable')) {
+                    $('#dataTable').DataTable().clear().destroy();
+                }
+
+                var tableBody = $('#dataTable tbody');
+                tableBody.empty();
+
+                $.each(response.query, function (index, item) {
+                    var row = $('<tr>');
+
+                    row.append($('<td>').text(item.partNum));
+                    row.append($('<td>').text(item.partDescription));
+                    row.append($('<td>').text(item.lotNum));
+                    row.append($('<td>').text(item.totalQty.toFixed(2)).css('text-align', 'right'));
+                         row.append($('<td>')
+                          .text(item.uomDesc) // แสดงค่า uomDesc ในช่องตาราง
+                          .attr('data-unit', item.unit) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                         );
+                    row.append($('<td>')
+                          .text(item.wbDescription) // แสดงค่า uomDesc ในช่องตาราง
+                          .attr('data-unit', item.bin) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                         );
+                    // สร้าง Input
+                    var input = $('<input>')
+                        .attr({
+                            type: 'number',
+                            class: 'form-control',
+                            value: item.returnQTY.toFixed(2)
+                        })
+                        .css({
+                            'background-color': '#f5ecb5',
+                            'color': 'Black',
+                            'text-align': 'right'
+                        })
+                        .on('click', function () {
+                            if (input.val() === '0.00') {
+                                input.val('');
+                            }
+                        });
+                         if (item.returnQTY > 0) {
+                                input.attr('readonly', true); // ปิดการพิมพ์ถ้า totalQty มากกว่า 0 e2e3df
+                                input.css('background-color', '#e2e3df',); // เปลี่ยนสีพื้นหลัง (ตัวอย่าง: สีแดงอ่อน)
+                                    input.prop('disabled', true); // ปิดการคลิก (disable input)
+
+                                newColumnValue = 1; // กำหนดค่าเป็น 1 เมื่อ totalQty มากกว่า 0
+
+                            }
+                            else {
+                allReturnQtyNonZero = false; // พบ returnQTY ที่เป็น 0
+            }
+                    row.append($('<td>').append(input));
+
+                    // สร้าง Dropdown สำหรับ UOM
+                    var uomDropdown = $('<select>')
+                        .addClass('form-control unit-dropdown')
+                        .append($('<option>').val('').text('เลือกหน่วย'));
+
+                              // ตรวจสอบว่ามีค่า returnunit หรือไม่
+                        if (item.returnunit) {
+                            // หากมีค่า returnunit ให้ตั้งค่าเริ่มต้นและปิดการเลือก
+                            uomDropdown.append($('<option>').val(item.returnunit).text(item.uoMre));
+                            uomDropdown.val(item.returnunit);
+                            uomDropdown.prop('disabled', true); // ปิดการเลือก
+                        } else {
+                            // เพิ่มตัวเลือกใน Dropdown
+                            var relatedUOMs = response.uom.filter(u => u.partNum === item.partNum);
+                            relatedUOMs.forEach(function (uom) {
+                                uomDropdown.append($('<option>').val(uom.uomcode).text(uom.uoMre));
+                            });
+
+                            // เปิดการเลือกถ้าไม่มีค่า returnunit
+                            uomDropdown.prop('disabled', false);
+                             // ตั้งค่าสีพื้นหลังให้เหมือน input
+                            uomDropdown.css({
+                                'background-color': '#f5ecb5',
+                                'color': 'Black',
+                            });
+                        }
+
+                    // Event เมื่อเปลี่ยนค่าใน Dropdown
+                    uomDropdown.on('change', function () {
+                        var selectedUnit = $(this).val();
+                        var partNum = item.partNum;
+                        var company = Company;
+                        var currentRow = $(this).closest('tr');
+
+                        if (selectedUnit) {
+                            $.ajax({
+                                url: '/ReturnStock/convertf',
+                                method: 'GET',
+                                data: {
+                                    partNum: partNum,
+                                    company: company,
+                                    unit: selectedUnit
+                                },
+                                success: function (response) {
+                                    if (response && response.length > 0) {
+                                        var convertedValue = response[0].convFactor;
+                                        currentRow.find('td').eq(12).text(convertedValue); // อัปเดตค่าคอลัมน์ 12
+                                          // ค้นหา input ในคอลัมน์ที่ 6 และตั้งค่าเริ่มต้นเป็น 0.00
+            var input = currentRow.find('td').eq(6).find('input'); // input อยู่ในคอลัมน์ที่ 6
+            if (input.length > 0) {
+                                                    // ตรวจสอบสีพื้นหลังของ input
+                                                    var backgroundColor = input.css('background-color');
+
+                                                    // หากสีไม่ใช่ #e2e3df ให้เปลี่ยนค่าเป็น 0.00
+                                                    if (backgroundColor !== 'rgb(226, 227, 223)') {
+                                                        input.val('0.00'); // ตั้งค่าเป็น 0.00
+                                                    }
+            } else {
+                // กรณีที่ไม่มี input ให้เพิ่ม input พร้อมค่าเริ่มต้น
+                var newInput = $('<input>')
+                    .attr({
+                        type: 'number',
+                        class: 'form-control',
+                    })
+                    .css({
+                        'background-color': '#f5ecb5',
+                        'color': '#6c757d',
+                        'text-align': 'right',
+                    })
+                    .val('0.00'); // ตั้งค่าเริ่มต้นเป็น 0.00
+
+                // เพิ่ม input เข้าไปในคอลัมน์ที่ 6
+                currentRow.find('td').eq(6).html(newInput);
+            }
+
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        text: 'ไม่สามารถแปลงหน่วยได้'
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    row.append($('<td>').append(uomDropdown));
+                            row.append($('<td>').text(item.paidId).css('display', 'none'));
+                            row.append($('<td>').text(item.detailID).css('display', 'none'));
+                            row.append($('<td>').text(item.plant).css('display', 'none'));
+                            row.append($('<td>').text(item.reason).css('display', 'none'));
+
+                            // กำหนดค่าเริ่มต้นของ column12 เป็น 0
+                            row.append($('<td>').text(0).css('display', 'none'));
+                            row.append($('<td>').text(0).css('display', 'none'));
+                            row.append($('<td>').text(item.convU).css('display', 'none'));
+
+                    tableBody.append(row);
+                });
+                  // ปิดใช้งาน approveBtn ถ้าไม่มี returnQTY เป็น 0
+                if (allReturnQtyNonZero) {
+                    $('#approveBtn').prop('disabled', true);
+                } else {
+                    $('#approveBtn').prop('disabled', false);
+                }
+
+                // ตั้งค่าการแสดง DataTable ใหม่
+                $(document).ready(function () {
+                    $('#dataTable').DataTable({
+                        "paging": false,
+                        "scrollY": "400px",
+                        "scrollCollapse": true,
+                        "lengthChange": false,
+                        "searching": true,
+                        "info": false
+                    });
+                });
+
+                hideLoadingOverlay();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching BillOfLading data:', error);
+                $('#dataTable tbody').empty();
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่พบข้อมูล'
+                });
+
+                hideLoadingOverlay();
+            }
+        });
+    }
+                // ฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+                function checkApprovalButton() {
+                    // ตรวจสอบค่าใน #tabletotalQty และ #hasPermission
+                    var tableTotalQtyValue = $('#tabletotalQty').text();
+                    var hasPermissionValue = $('#hasPermission').text();
+
+                    // ถ้าทั้งสองค่าไม่เป็น true ให้ซ่อนปุ่ม approve
+                    if (tableTotalQtyValue !== 'true' || hasPermissionValue !== 'true') {
+                        console.log('ปิดปุ่มทำงาน');
+
+                    } else {
+                        $('#approveBtn').show(); // แสดงปุ่ม approve
+                    }
+                }
+
+            });
+
+            $('#dataTable').on('blur', 'td input', function () {
+                var row = $(this).closest('tr'); // หาบรรทัดที่พิมพ์
+                var column0Value = row.find('td').eq(0).text().trim(); // ค่าของ column 0 ของแถวที่พิมพ์
+                var totalLot = parseInt(row.find('td').eq(3).text().trim(), 10); // ค่าจาก column 14 ของแถวที่กำลังพิมพ์อยู่ (แปลงเป็นจำนวนเต็ม)
+                var onhandColumn = parseFloat(row.find('td').eq(3).text().trim()); // ดึงค่าจากคอลัมน์ที่ 6 (หน่วยนับ Onhand)
+                var QTYOnhand = parseFloat(row.find('td').eq(13).text().trim()); // ดึงค่าจากคอลัมน์ที่ 5 ( Onhand)
+
+                var unitColumn = row.find('td').eq(7).find('select').val(); // ดึงค่าจากคอลัมน์ที่ 10 (หน่วยนับจ่าย)
+                var conu = parseFloat(row.find('td').eq(12).text().trim()); // ดึงค่าจากคอลัมน์ที่ 16
+                var cond = parseFloat(row.find('td').eq(14).text().trim()); // ดึงค่าจากคอลัมน์ที่ 17
+                var inputValue = $(this).val(); // ค่าที่พิมพ์ในช่อง input
+                var backgroundColor = $(this).css('background-color'); // ดึงสีพื้นหลังของ input
+                if (unitColumn === 'เลือกหน่วย' || !unitColumn) {
+                    // กรณีที่ unitColumn มีค่าเป็น 'เลือกหน่วย' หรือยังไม่ได้เลือกค่า
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ข้อผิดพลาด',
+                        text: 'กรุณาเลือกหน่วยก่อนดำเนินการ!',
+                    });
+                             if (backgroundColor === 'rgb(245, 236, 181)') { // สี #f5ecb5
+                        $(this).val('0.00'); // เปลี่ยนค่าเป็น 0.00
+                    } else if (backgroundColor !== 'rgb(226, 227, 223)') { // ไม่ใช่สี #e2e3df
+                        $(this).val('0.00'); // เปลี่ยนค่าเป็น 0.00
+                    }
+                    return;
+                } else {
+                    // กรณีที่ unitColumn ถูกเลือกค่าแล้ว
+                    console.log('หน่วยที่เลือก:', unitColumn);
+                }
+                // เติม .00 หากไม่ได้พิมพ์ทศนิยม
+                if (!inputValue.includes('.') && inputValue != '' && inputValue != null) {
+                    inputValue = inputValue + '.00';
+                }
+                $(this).val(inputValue); // อัปเดตค่าภายใน input
+
+                // เช็คว่า ช่อง input เป็น 0 หรือค่าว่าง
+                if (inputValue === '' || inputValue === '0.00') {
+                    $(this).val('0.00'); // เติมค่า 0 ถ้าค่าภายในเป็นค่าว่างหรือ 0
+                }
+
+                // เช็คว่า หน่วยนับจ่ายเป็น KG และ หน่วยนับ Onhand เป็น TON
+                if (unitColumn !== '' && onhandColumn !== '') {
+                    var kgValue = parseFloat(inputValue);
+                    // เช็คว่าเป็นค่า 0.00 หรือ 0 แล้วแปลงเป็น 0 จริง
+                    if (isNaN(kgValue) || kgValue <= 0) {
+                        kgValue = 0;
+                    }
+                    // ถ้าเป็นเลขและมีค่ามากกว่าศูนย์ แปลงจาก KG เป็น TON
+                    if (!isNaN(kgValue) && kgValue > 0) {
+                        var tonValue = kgValue * (conu / cond);
+                        row.find('td').eq(13).text(tonValue); // อัปเดตค่าที่คอลัมน์ที่ 11
+                    }
+                }
+
+                // เช็คว่า หน่วยนับจ่ายเป็น KG และ หน่วยนับ Onhand เป็น TON
+                else if (unitColumn === onhandColumn) {
+                    var kgValue = parseFloat(inputValue);
+
+                    // ถ้าเป็นเลขและมีค่ามากกว่าศูนย์ แปลงจาก KG เป็น TON
+                    if (!isNaN(kgValue) && kgValue > 0) {
+                        var tonValue = kgValue; // แปลงเป็น TON
+                        // row.find('td').eq(11).text(tonValue); // อัปเดตค่าที่คอลัมน์ที่ 11
+                    }
+                }
+                // if (tonValue > QTYOnhand) {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'ผลรวมเกินจำนวนที่กำหนด',
+                //         text: 'ไม่สามารถจ่ายมากกว่า ของที่มีได้'
+                //     });
+                //     $(this).val('0.00'); // รีเซ็ตค่าภายใน input
+                //     return;
+                // }
+
+                // คำนวณผลรวมของช่อง input ในแถวอื่นๆ ที่ column 0 ตรงกับค่า column 0 ของแถวที่พิมพ์
+                // var totalSum = 0;
+
+                // //เรียกใช้ .each() เพื่อหาผลรวมจากแถวที่มีค่า column 0 ตรงกัน
+                // $('#dataTable tbody tr').each(function () {
+                //     var rowColumn0Value = $(this).find('td').eq(0).text().trim(); // ค่าของ column 0 ในแถวปัจจุบัน
+                //     var inputInRow = $(this).find('td').eq(13).text().trim(); // ค่าของ column 13 ในแถวปัจจุบัน
+                //     var inputInRowNum = parseFloat(inputInRow);
+
+                //     // ถ้า column 0 ตรงกัน และช่อง input เป็นตัวเลขที่มากกว่า 0
+                //     if (!isNaN(inputInRowNum) && inputInRowNum > 0) {
+                //         totalSum += inputInRowNum; // ผลรวมค่าที่พิมพ์ในช่อง input
+                //     }
+                // });
+
+                // ตรวจสอบว่าผลรวมเกิน totalLot หรือไม่
+                if (tonValue > totalLot) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ผลรวมเกินจำนวนที่กำหนด',
+                        text: 'ไม่สามารถคืนเกินกว่ายอดจ่าย'
+                    });
+                     $('#dataTable tbody tr').each(function () {
+                        var rowColumn0Value = $(this).find('td').eq(0).text().trim();
+                        var inputInRow = $(this).find('td').eq(13).text().trim();
+                        var inputInRowNum = parseFloat(inputInRow);
+
+                        // ถ้าค่าของแถวนี้ตรงกับ column0Value และช่อง input มีค่ามากกว่า 0
+                        if (rowColumn0Value === column0Value && !isNaN(inputInRowNum) && inputInRowNum > 0) {
+                            $(this).find('td').eq(13).text('0.00'); // รีเซ็ตค่าของ input ให้เป็น 0.00
+                        }
+                    });
+                    $(this).val('0.00'); // รีเซ็ตค่าภายใน input
+                    $('#countmultilot').text('0'); // รีเซ็ตผลรวม
+                } else {
+                    // แสดงผลรวมใน totallot (สมมติว่า totallot คือองค์ประกอบที่แสดงผล)
+                    $('#countmultilot').text(totalSum); // อัปเดตค่าผลรวมใน totallot
+                    $('#totallot').text(totalLot); // อัปเดตค่าผลรวมใน totallot
+                }
+            });
+
+
+    $('#approveBtn').on('click', function () {
+        Swal.fire({
+            title: 'ยืนยันการคืนของ',
+            text: "ยืนยันการรับคืนของหรือไม่",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'ยืนยันการรับคืน',
+            cancelButtonText: 'กลับไปแก้ไข'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var docNumber = $('#docNumber').val();
+                var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+                var selectedWHCode = $('#WareHouse').text();
+
+                var isQtyExceed = false;
+                var rowsToSave = [];
+
+                $('#dataTable tbody tr').each(function () {
+                    var row = $(this);
+                    var onHandQty = parseFloat(row.find('td').eq(5).text());
+                    var qtyPaidInput = row.find('input');
+                    const company = sessionStorage.getItem('Company');
+                    var WH = $('#WareHouse').text();
+                    var DOCID = $('#docNumber').val();
+                    var qtyReturn = parseFloat(row.find('input').val());
+                    var PaidID = parseFloat(row.find('td').eq(8).text());
+                    var DetailID = parseFloat(row.find('td').eq(9).text());
+                    var unitreturn = row.find('td').eq(7).find('select').val();
+                    var DU = row.find('td').eq(7).find('select');
+                    var unitreturnDropdown = DU.val(); // ใช้ค่าของ dropdown
+                    var lotnum = row.find('td').eq(2).text().trim();
+                    var part = row.find('td').eq(0).text().trim();
+                    var bin = row.find('td').eq(5).attr('data-unit');
+                    var Plant = row.find('td').eq(10).text(); // Example: Bin from column 8
+                    var ReasonCode = row.find('td').eq(11).text(); // Example: LotNum from column 9
+                    var cout = row.find('td').eq(3).text(); // Example: LotNum from column 9
+                    var tranQTY = parseFloat(row.find('td').eq(13).text());
+
+
+                    var today = new Date();
+                    var year = today.getFullYear();
+                    var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                    var day = today.getDate().toString().padStart(2, '0');
+                    var trandate = year + '-' + month + '-' + day;
+
+                    var Createdate = today.getFullYear() + '-' +
+                        ('0' + (today.getMonth() + 1)).slice(-2) + '-' +
+                        ('0' + today.getDate()).slice(-2) + ' ' +
+                        ('0' + today.getHours()).slice(-2) + ':' +
+                        ('0' + today.getMinutes()).slice(-2) + ':' +
+                        ('0' + today.getSeconds()).slice(-2);
+
+                          if (tranQTY > cout ) {
+                                            isQtyExceed = true;
+                                        }
+
+                    if (qtyReturn > 0) {
+                        rowsToSave.push({
+                            docNumber: DOCID,
+                            DetailID: DetailID,
+                            PaidID: PaidID,
+                            qtyReturn: qtyReturn,
+                            unitreturn:unitreturn,
+                            Createdate:Createdate,
+                            WH:WH,
+                            username:username,
+                            lotnum:lotnum,
+                            partNum:part,
+                            bin:bin,
+                            Plant:Plant,
+                            trandate:trandate,
+                            ReasonCode:ReasonCode,
+                            company:company
+                        });
+                        qtyPaidInput.attr('readonly', true);
+                        qtyPaidInput.css('background-color', '#e2e3df');
+                         const dropdownInColumn7 = qtyPaidInput.closest('tr').find('td').eq(7).find('select');
+                        dropdownInColumn7.prop('disabled', true); // ปิด dropdown
+                        dropdownInColumn7.css('background-color', '#e2e3df'); // เปลี่ยนสีพื้นหลังเพื่อแสดงว่า dropdown ถูกปิด
+
+                    }
+                });
+
+                if (isQtyExceed) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ข้อผิดพลาด',
+                        text: 'ห้ามเกินยอดคงเหลือและยอดเบิก'
+                    });
+                    return;
+                }
+
+                if (rowsToSave.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่มีข้อมูลใหม่ให้บันทึกครับ',
+                        showConfirmButton: true
+                    });
+                    return;
+                }
+
+                if (rowsToSave.length > 0) {
+                    let savePromises = [];
+                    let paidIds = [];
+
+                    rowsToSave.forEach(function (data, index) {
+                        let ajaxPromise = $.ajax({
+                            url: '/ReturnStock/SavePayment',
+                            type: 'POST',
+                            data: data,
+                            success: function (response) {
+                                if (response.success) {
+      // เก็บ PaidID และข้อมูลเพิ่มเติม
+                                                            paidIds.push({
+                                                            returnID: response.returnID,
+                                                            DetailID: response.detailID,
+                                                            lotnum: response.lotnum,
+                                                            QTY: response.qty,
+                                                            partNum: response.partNum,        // หมายเลขชิ้นส่วน
+                                                            Plant: response.plant,            // โรงงาน
+                                                            trandate: response.trandate,       // วันที่ทำรายการ
+                                                            ReasonCode: response.reasonCode,
+                                                            bin: response.bin,
+                                                            Dimcode: response.dimcode,
+                                                            Company: response.company,
+                                                            DOCID: response.docid,
+                                                            WH: response.wh,
+                                                            PaidID: response.paidID
+                                                        });
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'บันทึกข้อมูลสำเร็จ',
+                                        text: 'ข้อมูลการจ่ายได้ถูกบันทึกลงฐานข้อมูลแล้ว'
+                                    });
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'ข้อผิดพลาด',
+                                    text: 'ไม่สามารถบันทึกข้อมูลลงฐานข้อมูลได้'
+                                });
+                            }
+                        });
+                        savePromises.push(ajaxPromise);
+                    });
+
+                    $.when.apply($, savePromises).done(function () {
+                        generateCSV(paidIds);
+                    });
+                }
+            }
+        });
+    });
+
+
+            function generateCSV(paidIds) {
+                // กำหนด header ตามที่ต้องการ
+                var header = ["Company", "Plant", "Trandate", "PartNum", "TranQTY", "UM", "ToWarehouseCode", "ToBinNum", "LotNum", "ReasonCode", "TranReference"];
+
+                // จัดรูปแบบข้อมูลให้ตรงกับ header
+                var rows = paidIds.map(item => [
+                    item.Company || "",
+                    item.Plant || "",
+                    item.trandate || "",
+                    item.partNum || "",
+                    (isNaN(item.QTY) ? 0 : parseFloat(item.QTY)).toFixed(2) || "",
+                    item.Dimcode || "",
+                    item.WH || "",
+                    item.bin || "",
+                    item.lotnum || "",
+                    item.ReasonCode || "",
+                    item.returnID+"/"+item.PaidID + "/" + item.DetailID + "/" + item.DOCID || ""
+                ]);
+
+                // รวม header และ rows เป็น CSV
+                let csvContent = [header.join(","), ...rows.map(row => row.join(","))].join("\n");
+                // var company = '@ViewBag.Company';
+                 const company = sessionStorage.getItem('Company');
+                     // ดึงวันที่ปัจจุบันในรูปแบบ YYYYMMDD_HHmmss
+             var formattedDate = now.getFullYear().toString() +
+                String(now.getMonth() + 1).padStart(2, '0') +
+                String(now.getDate()).padStart(2, '0') +
+                String(now.getHours()).padStart(2, '0') +
+                String(now.getMinutes()).padStart(2, '0') +
+                String(now.getSeconds()).padStart(2, '0');
+                // ดึงค่าจาก textbox
+                var DOCID = $('#docNumber').val();
+                var selectedWHCode = $('#WareHouse').text();
+                var fileName = 'RT'+company + selectedWHCode + DOCID + formattedDate + ".csv";
+
+                // ส่งข้อมูล CSV ไปยังเซิร์ฟเวอร์
+                $.ajax({
+                    url: '/ReturnStock/SaveCsvToServer',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        CsvData: csvContent, // ใช้ชื่อเดียวกับที่เซิร์ฟเวอร์ต้องการ
+                        FileName: fileName
+                    }),
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ',
+                            text: response.message
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: xhr.responseText || 'ไม่สามารถบันทึกไฟล์ได้'
+                        });
+                    }
+                });
+            }
+
+
+
+            function showLoadingOverlay() {
+                $.LoadingOverlay("show", {
+                    image: "",
+                    fontawesome: "fa-solid fa-truck-front fa-bounce",
+                });
+            }
+
+            function hideLoadingOverlay() {
+                $.LoadingOverlay("hide");
+            }
+        });
+</script>
+<script>
+        function showLoadingOverlay() {
+            $.LoadingOverlay("show", {
+                image: "",
+                fontawesome: "fa-solid fa-truck-front fa-bounce",
+            });
+        }
+
+        function hideLoadingOverlay() {
+            $.LoadingOverlay("hide");
+        }
+        $(window).on('load', function () {
+            var docNumber = $('#docNumber').val();
+            var WHCode = $('#docStatus').val();
+            var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+            var Company = '@ViewBag.Company';
+
+            $.ajax({
+                url: '/ReturnStock/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                method: 'GET',
+                data: {
+                    docNumber: docNumber,
+                    WHCode: "",
+                    Company: Company
+                },
+                success: function (response) {
+                    // เก็บข้อมูลที่ได้จากการค้นหาไว้ในตัวแปร BE
+                    $('#BE').val(response[0].description);
+                    $('#dep').val(response[0].depName);
+                    $('#Plant').val(response[0].name);
+                    // ดึงค่าจาก response และตัดข้อความตั้งแต่ T เป็นต้นไป
+                    var reqDate = response[0].reqDate.split('T')[0]; // ได้ค่า "2024-12-23"
+
+                    // แยกปี เดือน วันออกจากกัน
+                    var parts = reqDate.split('-'); // ["2024", "12", "23"]
+                    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0]; // "23/12/2024"
+                    $('#Datedoc2').val(response[0].reqDate);
+
+                    // แสดงผลใน input
+                    $('#Datedoc').val(formattedDate);
+                    $('#BEcuse').val(response[0].remark);
+                    $('#DetailID').text(response[0].detailID);
+
+                    var BE = response;
+
+                    // ทดสอบการแสดงข้อมูล BE
+                    console.log('ข้อมูลที่ได้จาก BillOfLading:', BE);
+
+                    // คุณสามารถดำเนินการเพิ่มเติมกับข้อมูลที่เก็บใน BE ได้ที่นี่
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching BillOfLading data:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่พบข้อมูล GetBillOfLading'
+                    });
+                    hideLoadingOverlay();
+                },
+                complete: function () {
+                    hideLoadingOverlay();
+                }
+            });
+            var statusFromServer = '@ViewData["Status"]';
+            var Company = '@ViewBag.Company';
+
+            $.ajax({
+                url: '/ReturnStock/WHDescription',
+                type: 'GET',
+                data: {
+                    docNumber: docNumber,
+                    Company: Company
+                },
+                success: function (data) {
+                    $('#docStatus').empty(); // ล้าง dropdown
+
+                    // เพิ่มตัวเลือกใน dropdown
+                    $.each(data, function (index, item) {
+                        $('#docStatus').append(
+                            $('<option>', { value: item.description }).text(item.description)
+                        );
+                    });
+
+                    // ตั้งค่า ViewData["Status"] เป็นค่าเริ่มต้น
+                    $('#docStatus option').each(function () {
+                        if ($(this).val() === statusFromServer) {
+                            $(this).prop('selected', true);
+                            $('#docStatus').focus();
+                        }
+                    });
+
+                    // ตรวจสอบสิทธิ์โดยใช้ docStatus
+                    const selectedDocStatus = $('#docStatus').val();
+                    validateWarehousePermission(username, selectedDocStatus);
+
+                    // เรียกข้อมูลคลังสินค้า
+                    fetchWarehouseData(selectedDocStatus);
+                },
+                error: function () {
+                    Swal.fire('Error', 'ไม่สามารถดึงข้อมูลได้', 'error');
+                }
+            });
+
+            // ฟังก์ชันตรวจสอบสิทธิ์
+            function validateWarehousePermission(username, docStatus) {
+                $.ajax({
+                    url: '/ReturnStock/BPI_BillOfLoading_Wh',
+                    type: 'GET',
+                    data: { username: username },
+                    success: function (data) {
+                        const hasPermission = data.some(item => item.description === docStatus);
+                        $('#hasPermission').text(hasPermission ? 'true' : 'false');
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'ไม่สามารถตรวจสอบสิทธิ์ได้', 'error');
+                    }
+                });
+            }
+
+
+            // Function สำหรับดึงข้อมูล `allWH` ตามค่า `Description`
+            function fetchWarehouseData(description) {
+                $.ajax({
+                    url: '/ReturnStock/WHCODE',
+                    type: 'GET',
+                    data: { Description: description }, // ส่ง Description ที่ถูกเลือกไปยัง API
+                    success: function (data) {
+                        // ล้าง Dropdown ก่อน
+                        $('#WareHouse').empty();
+
+                        // วนลูปข้อมูลที่ได้จาก API เพื่อเพิ่มข้อมูลลงใน Dropdown
+                        $.each(data, function (index, item) {
+                            $('#WareHouse').append(
+                                $('<option>', { value: item.warehouseCode })
+                                    .text(item.warehouseCode)
+                            );
+                        });
+
+                        // หลังจากโหลด `#WareHouse` เสร็จสิ้น ให้ดึงข้อมูล TableBill โดยใช้ WHCode ตัวแรกใน Dropdown
+                        const selectedWHCode = $('#WareHouse').text(); // ค่าของ WHCode ที่เลือกแรก
+                        if (selectedWHCode) {
+                            // fetchBillOfLading(docNumber, selectedWHCode);
+                            fetchTableBill(selectedWHCode);
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'ไม่สามารถดึงข้อมูล WHCODE ได้', 'error');
+                    }
+                });
+            }
+    function fetchTableBill(selectedWHCode) {
+        var Company = '@ViewBag.Company';
+
+        $.ajax({
+            url: '/ReturnStock/TableBill',
+            method: 'GET',
+            data: {
+                docNumber: docNumber,
+                WHCode: selectedWHCode,
+                Company: Company
+            },
+            success: function (response) {
+                 var allReturnQtyNonZero = true; // ตัวแปรเพื่อตรวจสอบว่าไม่มีค่า returnQTY เป็น 0
+
+                // ลบ DataTable เก่า (ถ้ามี)
+                if ($.fn.DataTable.isDataTable('#dataTable')) {
+                    $('#dataTable').DataTable().clear().destroy();
+                }
+
+                var tableBody = $('#dataTable tbody');
+                tableBody.empty();
+
+                $.each(response.query, function (index, item) {
+                    var row = $('<tr>');
+
+                    row.append($('<td>').text(item.partNum));
+                    row.append($('<td>').text(item.partDescription));
+                    row.append($('<td>').text(item.lotNum));
+                    row.append($('<td>').text(item.totalQty.toFixed(2)).css('text-align', 'right'));
+                         row.append($('<td>')
+                          .text(item.uomDesc) // แสดงค่า uomDesc ในช่องตาราง
+                          .attr('data-unit', item.unit) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                         );
+                    row.append($('<td>')
+                          .text(item.wbDescription) // แสดงค่า uomDesc ในช่องตาราง
+                          .attr('data-unit', item.bin) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                         );
+                    // สร้าง Input
+                    var input = $('<input>')
+                        .attr({
+                            type: 'number',
+                            class: 'form-control',
+                            value: item.returnQTY.toFixed(2)
+                        })
+                        .css({
+                            'background-color': '#f5ecb5',
+                            'color': 'Black',
+                            'text-align': 'right'
+                        })
+                        .on('click', function () {
+                            if (input.val() === '0.00') {
+                                input.val('');
+                            }
+                        });
+                         if (item.returnQTY > 0) {
+                                input.attr('readonly', true); // ปิดการพิมพ์ถ้า totalQty มากกว่า 0 e2e3df
+                                input.css('background-color', '#e2e3df',); // เปลี่ยนสีพื้นหลัง (ตัวอย่าง: สีแดงอ่อน)
+                                    input.prop('disabled', true); // ปิดการคลิก (disable input)
+
+                                newColumnValue = 1; // กำหนดค่าเป็น 1 เมื่อ totalQty มากกว่า 0
+
+                            }
+                            else {
+                allReturnQtyNonZero = false; // พบ returnQTY ที่เป็น 0
+            }
+                    row.append($('<td>').append(input));
+
+                    // สร้าง Dropdown สำหรับ UOM
+                    var uomDropdown = $('<select>')
+                        .addClass('form-control unit-dropdown')
+                        .append($('<option>').val('').text('เลือกหน่วย'));
+
+                              // ตรวจสอบว่ามีค่า returnunit หรือไม่
+                        if (item.returnunit) {
+                            // หากมีค่า returnunit ให้ตั้งค่าเริ่มต้นและปิดการเลือก
+                            uomDropdown.append($('<option>').val(item.returnunit).text(item.uoMre));
+                            uomDropdown.val(item.returnunit);
+                            uomDropdown.prop('disabled', true); // ปิดการเลือก
+                        } else {
+                            // เพิ่มตัวเลือกใน Dropdown
+                            var relatedUOMs = response.uom.filter(u => u.partNum === item.partNum);
+                            relatedUOMs.forEach(function (uom) {
+                                uomDropdown.append($('<option>').val(uom.uomcode).text(uom.uomdesc));
+                            });
+
+                            // เปิดการเลือกถ้าไม่มีค่า returnunit
+                            uomDropdown.prop('disabled', false);
+                             // ตั้งค่าสีพื้นหลังให้เหมือน input
+                            uomDropdown.css({
+                                'background-color': '#f5ecb5',
+                                'color': 'Black',
+                            });
+                        }
+
+                    // Event เมื่อเปลี่ยนค่าใน Dropdown
+                    uomDropdown.on('change', function () {
+                        var selectedUnit = $(this).val();
+                        var partNum = item.partNum;
+                        var company = Company;
+                        var currentRow = $(this).closest('tr');
+
+                        if (selectedUnit) {
+                            $.ajax({
+                                url: '/ReturnStock/convertf',
+                                method: 'GET',
+                                data: {
+                                    partNum: partNum,
+                                    company: company,
+                                    unit: selectedUnit
+                                },
+                                success: function (response) {
+                                    if (response && response.length > 0) {
+                                        var convertedValue = response[0].convFactor;
+                                        currentRow.find('td').eq(12).text(convertedValue); // อัปเดตค่าคอลัมน์ 12
+                                          // ค้นหา input ในคอลัมน์ที่ 6 และตั้งค่าเริ่มต้นเป็น 0.00
+            var input = currentRow.find('td').eq(6).find('input'); // input อยู่ในคอลัมน์ที่ 6
+            if (input.length > 0) {
+                                                    // ตรวจสอบสีพื้นหลังของ input
+                                                    var backgroundColor = input.css('background-color');
+
+                                                    // หากสีไม่ใช่ #e2e3df ให้เปลี่ยนค่าเป็น 0.00
+                                                    if (backgroundColor !== 'rgb(226, 227, 223)') {
+                                                        input.val('0.00'); // ตั้งค่าเป็น 0.00
+                                                    }
+            } else {
+                // กรณีที่ไม่มี input ให้เพิ่ม input พร้อมค่าเริ่มต้น
+                var newInput = $('<input>')
+                    .attr({
+                        type: 'number',
+                        class: 'form-control',
+                    })
+                    .css({
+                        'background-color': '#f5ecb5',
+                        'color': '#6c757d',
+                        'text-align': 'right',
+                    })
+                    .val('0.00'); // ตั้งค่าเริ่มต้นเป็น 0.00
+
+                // เพิ่ม input เข้าไปในคอลัมน์ที่ 6
+                currentRow.find('td').eq(6).html(newInput);
+            }
+
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        text: 'ไม่สามารถแปลงหน่วยได้'
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    row.append($('<td>').append(uomDropdown));
+                            row.append($('<td>').text(item.paidId).css('display', 'none'));
+                            row.append($('<td>').text(item.detailID).css('display', 'none'));
+                            row.append($('<td>').text(item.plant).css('display', 'none'));
+                            row.append($('<td>').text(item.reason).css('display', 'none'));
+
+                            // กำหนดค่าเริ่มต้นของ column12 เป็น 0
+                            row.append($('<td>').text(0).css('display', 'none'));
+                            row.append($('<td>').text(0).css('display', 'none'));
+                            row.append($('<td>').text(item.convU).css('display', 'none'));
+
+                    tableBody.append(row);
+                });
+                  // ปิดใช้งาน approveBtn ถ้าไม่มี returnQTY เป็น 0
+                if (allReturnQtyNonZero) {
+                    $('#approveBtn').prop('disabled', true);
+                } else {
+                    $('#approveBtn').prop('disabled', false);
+                    $('#tabletotalQty').text('true');
+                }
+
+                // ตั้งค่าการแสดง DataTable ใหม่
+                $(document).ready(function () {
+                    $('#dataTable').DataTable({
+                        "paging": false,
+                        "scrollY": "400px",
+                        "scrollCollapse": true,
+                        "lengthChange": false,
+                        "searching": true,
+                        "info": false
+                    });
+                });
+                checkApprovalButton();
+                hideLoadingOverlay();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching BillOfLading data:', error);
+                $('#dataTable tbody').empty();
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่พบข้อมูล'
+                });
+
+                hideLoadingOverlay();
+            }
+        });
+    }
+
+            // ฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+            function checkApprovalButton() {
+                // ตรวจสอบค่าใน #tabletotalQty และ #hasPermission
+                var tableTotalQtyValue = $('#tabletotalQty').text();
+                var hasPermissionValue = $('#hasPermission').text();
+
+                // ถ้าทั้งสองค่าไม่เป็น true ให้ซ่อนปุ่ม approve
+                if (tableTotalQtyValue !== 'true' || hasPermissionValue !== 'true' || hasPermissionValue === '') {
+                    console.log('ปิดปุ่มทำงาน', 'tabletotalQty=', tableTotalQtyValue, 'hasPermissionValue=', hasPermissionValue);
+                            $('#approveBtn').prop('disabled', true); // ปิดการคลิกปุ่ม
+
+                }
+                else {
+                    $('#approveBtn').show(); // แสดงปุ่ม approve
+                    console.log('เปิดปุ่มทำงาน', 'tabletotalQty=', tableTotalQtyValue, 'hasPermissionValue=', hasPermissionValue);
+                            $('#approveBtn').prop('disabled', false); // เปิดใช้งานปุ่ม
+
+                }
+            }
+
+            $(document).ready(function () {
+                $('#docStatus').on('change', function () {
+                    // ตรวจสอบและทำลาย DataTable เก่า (ถ้ามี)
+                    if ($.fn.DataTable.isDataTable('#dataTable')) {
+                        $('#dataTable').DataTable().clear().destroy(); // ล้างข้อมูลและทำลาย DataTable
+                    }
+
+                    var selectedWHDescription = $(this).val();
+                    var selectedWHCode = $('#WareHouse').text();
+
+                    fetchWarehouseData(selectedWHDescription);
+                    fetchTableBill(selectedWHCode);
+
+                    $.ajax({
+                        url: '/ReturnStock/BPI_BillOfLoading_Wh',
+                        type: 'GET',
+                        data: { username: username },
+                        success: function (data) {
+                            // ตรวจสอบว่า selectedWHDescription ตรงกับ item.description ใดๆ ในข้อมูลที่ส่งกลับมา
+                            const hasPermission = data.some(item => item.description === selectedWHDescription);
+
+                            // เปลี่ยนค่าของ label hasPermission เป็น true หรือ false
+                            $('#hasPermission').text(hasPermission ? 'true' : 'false');
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'ไม่สามารถตรวจสอบสิทธิ์ได้', 'error');
+                        }
+                    });
+                    // เรียกฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+                    checkApprovalButton();
+                });
+            });
+
+        });
+</script>

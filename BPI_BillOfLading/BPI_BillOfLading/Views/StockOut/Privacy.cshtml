@@ -1,0 +1,1842 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+    // DateTime? docDate = ViewData["date"] as DateTime?;
+    // var Username = ViewBag.Username as string;
+    // var Company = ViewBag.Company as string;
+        <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+
+}
+
+<style>
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .highlight-row {
+        background-color: #f8d7da; /* สีแดงอ่อน */
+    }
+
+    #qrcode-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+        #qrcode-popup > div {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+    #close-popup {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+    /* Style for the close button */
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent; /* No background */
+        border: none; /* No border */
+        cursor: pointer; /* Pointer on hover */
+        font-size: 24px; /* Increase icon size */
+        color: #ff5c5c; /* Set color to red */
+        transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    }
+
+        /* Hover effect */
+        .close-btn:hover {
+            color: #ff1c1c; /* Darker red on hover */
+            transform: scale(1.2); /* Slightly increase size on hover */
+        }
+
+        /* Focus effect for keyboard navigation */
+        .close-btn:focus {
+            outline: none; /* Remove default outline */
+            box-shadow: 0 0 0 3px rgba(255, 92, 92, 0.6); /* Custom focus outline */
+        }
+
+    .custom-btn {
+        background-color: #6c757d; /* สีเทา */
+        color: white;
+        border: none;
+        width: 100px; /* กำหนดขนาดปุ่มตามต้องการ */
+        height: 100px; /* ขยายความสูงของปุ่ม */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    .text-right {
+        text-align: right !important; /* เพิ่ม !important เพื่อให้มีลำดับความสำคัญสูง */
+    }
+
+    .custom-btn i {
+        font-size: 48px; /* ขยายขนาดไอคอน */
+    }
+
+    .custom-btn:hover {
+        background-color: #5a6268; /* สีเทาเข้มเมื่อ hover */
+    }
+    /* ซ่อนลูกศรแบบปกติ */
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,7" style="fill:black;"/></svg>') no-repeat right 10px center;
+        background-color: white; /* ตั้งค่าสีพื้นหลังตามต้องการ */
+        padding-right: 30px; /* เพิ่มช่องว่างสำหรับลูกศร */
+        border: 1px solid #ccc; /* ตั้งค่าเส้นขอบตามต้องการ */
+        border-radius: 4px; /* ตั้งค่ามุมโค้งมน */
+        width: 300px; /* ตั้งค่าความกว้าง */
+        height: 38px; /* ตั้งค่าความสูง */
+    }
+
+    .dropdown-disabled {
+        background-color: #f0f0f0; /* สีพื้นหลังเทา */
+        color: #a0a0a0; /* สีข้อความเทา */
+        pointer-events: none; /* ปิดการโต้ตอบ */
+    }
+
+</style>
+
+<div class="container-fluid mt-4">
+    <!-- Card 1 -->
+    <div class="card">
+
+        <div class="card-body">
+            <!-- Buttons -->
+
+            <div class="d-flex justify-content-end">
+                <button id="approveBtn" type="button" class="btn btn-success me-2">
+                    <i class="fa-solid fa-check"></i> ยืนยันการจ่าย
+                </button>
+            </div>
+
+            <div id="status" data-status="@ViewData["Status"]"></div>
+
+            <div class="my-4">
+
+                <!-- Form Elements -->
+                <label for="docNumber" class="me-5">เลขที่เอกสาร:</label>
+                <div style="display: inline-flex; align-items: center;">
+                    <input type="text" id="docNumber" class="form-control" style="width: 300px; margin-right: -1px;" value="@ViewData["docId"]" />
+                    <button id="qrcode" type="button" class="btn btn-secondary me-5">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </button>
+                </div>
+
+
+
+                <button id="searchButton" type="button" class="btn btn-info me-5">
+                    <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
+                </button>
+
+                <label for="docDate" class="me-5">วันที่:</label>
+                <input type="text" id="docDate" class="form-control d-inline-block me-2" style="width: 200px; " value="@ViewData["date"]" disabled />
+
+
+                <label for="docStatus" class="me-5" style="display:none">คลัง:</label>
+
+            </div>
+            <div class="my-4">
+                <!-- Form Elements -->
+                <label for="docNumber" style="margin-right: 89px;">เหตุผล:</label>
+                <input type="text" id="BE" class="form-control d-inline-block " style="width: 300px; margin-right: 110px;" disabled />
+
+
+
+                <label for="docDate" class="me-5">หน่วยงาน:</label>
+                <input type="text" id="dep" class="form-control d-inline-block me-4" style="width: 200px; " disabled />
+
+
+
+                <label for="docDate" class="me-2">วันที่ต้องการของ:</label>
+                <input type="text" id="Datedoc" class="form-control d-inline-block me-4" style="width: 200px;" disabled />
+
+            </div>
+            <div class="my-4">
+                <label for="BECU" class="me-2">หมายเหตุ</label>
+                <input type="text" id="BEcuse" class="form-control d-inline-block" style="width: 100%;" disabled />
+            </div>
+        </div>
+    </div>
+    <label id="DetailID" style="display:none"></label>
+    <label id="WareHouse" style="display:none"></label>
+    <label id="hasPermission" style="display:none">true</label>
+    <label id="tabletotalQty" style="display:none;"></label>
+    <label id="countmultilot" style="display:none;"></label>
+    <label id="totallot" style="display:none;"></label>
+    <label id="part" style="display:none;"></label>
+
+    <!-- Spacer -->
+    <div class="my-4"></div>
+
+    <!-- Card 2 -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">ตารางข้อมูล</h5>
+            <div class="table-responsive">
+                <table id="dataTable" class="table table-bordered table-primary">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">Part num</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 0 -->
+                            <th style="width: 200px;">Description</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 1 -->
+                            <th style="width: 80px;">จำนวน</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 2 -->
+                            <th style="width: 100px;">หน่วยนับ</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 3 -->
+                            <th style="width: 250px;">WareHouse</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 4 -->
+
+                            <th style="width: 250px;">BIN</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 4 -->
+                            <th style="width: 150px;">Lot</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 14 -->
+
+                            <th style="width: 100px;">ON Hand</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 5 -->
+                            <th style="width: 100px;">หน่วยนับ Onhand</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 6 -->
+
+                            <th style="width: 100px;">จ่ายแล้ว</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 7 -->
+                            <th style="width: 100px;">จำนวนที่จ่าย</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 8 -->
+                            <th style="width: 100px; display: none;">DetailID</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 9 -->
+                            <th style="width: 100px;">หน่วยนับจ่าย</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 10 -->
+                            <th style="width: 100px; display: none;">แปลงหน่วย</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 11 -->
+                            <th style="width: 100px; display: none;">Plant</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 12 -->
+                            <th style="width: 100px; display: none;">PaidID</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 13 -->
+                            <th style="width: 100px; display: none;">Reason</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 15 -->
+                            <th style="width: 100px; display: none;">ConvU</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 16 -->
+                            <th style="width: 100px;display: none;">ConDim</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 17 -->
+                            <th style="width: 100px; display: none;">log</th> <!-- กำหนดขนาดของคอลัมน์นี้ แถวที่ 18 -->
+
+                        </tr>
+                    </thead>
+                    <tbody class="table table-bordered table-Success">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- QR Code Scanner Popup -->
+    <div id="qrcode-popup" style="display: none;">
+        <div style="position: relative; width: 100%; max-width: 600px; margin: auto; padding: 20px; background-color: white; border: 1px solid #ddd; border-radius: 8px;">
+            <button id="close-popup" class="close-btn">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <div id="qrcode-reader" style="width: 90%; height: 400px;"></div>
+        </div>
+    </div>
+    <input id="Datedoc2" hidden />
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#approveBtn').hide(); // ซ่อนปุ่ม approve
+
+        $('#searchButton').click(function () {
+            // $('#approveBtn').hide(); // ซ่อนปุ่ม approve
+            // เคลียร์ข้อมูลทั้งหมดก่อนทำการค้นหาใหม่
+            $('#BE').val('');
+            $('#dep').val('');
+            $('#Plant').val('');
+            $('#Datedoc').val('');
+            $('#BEcuse').val('');
+            $('#docDate').val('');
+            $('#docStatus').val('');
+            var dateDog = "@ViewData["date"]"
+            var docNumber = $('#docNumber').val();
+            var WHCode = $('#docStatus').val();
+            const username = sessionStorage.getItem('username');
+            const Company = sessionStorage.getItem('Company');
+
+
+            $.ajax({
+                url: '/StockOut/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                method: 'GET',
+                data: {
+                    docNumber: docNumber,
+                    WHCode: "",
+                    Company: Company
+                },
+                success: function (response) {
+                    // เก็บข้อมูลที่ได้จากการค้นหาไว้ในตัวแปร BE
+                    $('#BE').val(response[0].description);
+                    $('#dep').val(response[0].depName);
+                    $('#Plant').val(response[0].name);
+                    // ดึงค่าจาก response และตัดข้อความตั้งแต่ T เป็นต้นไป
+                    var reqDate = response[0].reqDate.split('T')[0]; // ได้ค่า "2024-12-23"
+
+                    // แยกปี เดือน วันออกจากกัน
+                    var parts = reqDate.split('-'); // ["2024", "12", "23"]
+                    var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0]; // "23/12/2024"
+                    $('#Datedoc2').val(response[0].reqDate);
+
+                    // แสดงผลใน input
+                    $('#Datedoc').val(formattedDate);
+                    $('#BEcuse').val(response[0].remark);
+                    $('#DetailID').text(response[0].detailID);
+                    // ดึงค่าจาก response และตัดข้อความตั้งแต่ T เป็นต้นไป
+                    var docDate = response[0].docDate.split('T')[0]; // ได้ค่า "2024-12-23"
+
+                    // แยกปี เดือน วันออกจากกัน
+                    var pratsdocDate = docDate.split('-'); // ["2024", "12", "23"]
+                    var formatteddocDate = pratsdocDate[2] + '/' + pratsdocDate[1] + '/' + pratsdocDate[0]; // "23/12/2024"
+                    $('#docDate').val(formatteddocDate);
+
+                    var BE = response;
+
+                    // ทดสอบการแสดงข้อมูล BE
+                    console.log('ข้อมูลที่ได้จาก BillOfLading:', BE);
+
+                    // คุณสามารถดำเนินการเพิ่มเติมกับข้อมูลที่เก็บใน BE ได้ที่นี่
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching BillOfLading data:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่พบข้อมูล GetBillOfLading'
+                    });
+                    hideLoadingOverlay();
+                },
+                complete: function () {
+                    hideLoadingOverlay();
+                }
+            });
+            var statusFromServer = '@ViewData["Status"]';
+
+            $.ajax({
+                url: '/StockOut/WHDescription',
+                type: 'GET',
+                data: { docNumber: docNumber ,
+                Company:Company},
+                success: function (data) {
+                    $('#docStatus').empty(); // ล้าง dropdown
+
+                    // เพิ่มตัวเลือกใน dropdown
+                    $.each(data, function (index, item) {
+                        $('#docStatus').append(
+                            $('<option>', { value: item.description }).text(item.description)
+                        );
+                    });
+
+                    // ตั้งค่า ViewData["Status"] เป็นค่าเริ่มต้น
+                    $('#docStatus option').each(function () {
+                        if ($(this).val() === statusFromServer) {
+                            $(this).prop('selected', true);
+                            $('#docStatus').focus();
+                        }
+                    });
+
+                    // ตรวจสอบสิทธิ์โดยใช้ docStatus
+                    const selectedDocStatus = $('#docStatus').val();
+                    validateWarehousePermission(username, selectedDocStatus);
+
+                    // เรียกข้อมูลคลังสินค้า
+                    fetchWarehouseData(selectedDocStatus);
+                },
+                error: function () {
+                    Swal.fire('Error', 'ไม่สามารถดึงข้อมูลได้', 'error');
+                }
+            });
+
+            // ฟังก์ชันตรวจสอบสิทธิ์
+            // function validateWarehousePermission(username, docStatus) {
+            //     $.ajax({
+            //         url: '/StockOut/BPI_BillOfLoading_Wh',
+            //         type: 'GET',
+            //         data: { username: username },
+            //         success: function (data) {
+            //             const hasPermission = data.some(item => item.description === docStatus);
+            //             $('#hasPermission').text(hasPermission ? 'true' : 'false');
+            //         },
+            //         error: function () {
+            //             Swal.fire('Error', 'ไม่สามารถตรวจสอบสิทธิ์ได้', 'error');
+            //         }
+            //     });
+            // }
+
+
+            // Function สำหรับดึงข้อมูล `allWH` ตามค่า `Description`
+            function fetchWarehouseData(description) {
+                $.ajax({
+                    url: '/StockOut/WHCODE',
+                    type: 'GET',
+                    data: { Description: description }, // ส่ง Description ที่ถูกเลือกไปยัง API
+                    success: function (data) {
+                        // ล้าง Dropdown ก่อน
+                        $('#WareHouse').empty();
+
+                        // วนลูปข้อมูลที่ได้จาก API เพื่อเพิ่มข้อมูลลงใน Dropdown
+                        $.each(data, function (index, item) {
+                            $('#WareHouse').append(
+                                $('<option>', { value: item.warehouseCode })
+                                    .text(item.warehouseCode)
+                            );
+                        });
+                                     fetchTableBill();
+
+                        // หลังจากโหลด `#WareHouse` เสร็จสิ้น ให้ดึงข้อมูล TableBill โดยใช้ WHCode ตัวแรกใน Dropdown
+                        const selectedWHCode = $('#WareHouse').text(); // ค่าของ WHCode ที่เลือกแรก
+                        if (selectedWHCode) {
+                            // fetchBillOfLading(docNumber, selectedWHCode);
+
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'ไม่สามารถดึงข้อมูล WHCODE ได้', 'error');
+                    }
+                });
+            }
+             function fetchTableBill() {
+            const username = sessionStorage.getItem('username');
+            const Company = sessionStorage.getItem('Company');
+
+            $.ajax({
+                url: '/StockOut/TableBill', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                method: 'GET',
+                data: {
+                    docNumber: docNumber,
+                    Company: Company,
+                    username:username
+                },
+                success: function (response) {
+                    // $('#approveBtn').show(); // แสดงปุ่มเสมอ
+                    var allTotalQtyGreaterThanZero = true; // ตัวแปรตรวจสอบว่า totalQty ทั้งหมดมากกว่า 0 หรือไม่
+                    // ลบ DataTable เก่า (ถ้ามี)
+                    if ($.fn.DataTable.isDataTable('#dataTable')) {
+                        $('#dataTable').DataTable().clear().destroy();
+                    }
+
+
+                    var tableBody = $('#dataTable tbody');              
+                    tableBody.empty();
+
+                    $.each(response, function (index, item) {
+                        var row = $('<tr>');
+
+                        row.append($('<td>').text(item.partNum));
+                        row.append($('<td>').text(item.partDescription));
+                        row.append($('<td>').text(item.qty.toFixed(2)).css('text-align', 'right'));
+                        row.append($('<td>')
+                          .text(item.uomDesc) // แสดงค่า uomDesc ในช่องตาราง
+                          .attr('data-unit', item.unit) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                         );   
+                          row.append(
+                            $('<td>').append(
+                                $('<select>')
+                                    .addClass('WH-dropdown') // เพิ่มคลาสสำหรับจัดการสไตล์
+                                 .css({
+                                'width': '100%',
+                                'background-color': item.lotNum ? '#f0f0f0' : '', // เปลี่ยนสีพื้นหลัง
+                                'color': item.lotNum ? '#a0a0a0' : 'black' // เปลี่ยนสีข้อความ
+                            })
+                            .prop('disabled', item.lotNum ? true : false) // ปิดการคลิกถ้ามี lot
+                                        .append($('<option>').val(item.wareHouse).text(item.whDescription)) // กำหนดค่าเริ่มต้น
+
+                                    .each(function () {
+                                        var selectElement = $(this); // อ้างอิงถึง select ที่สร้างขึ้น
+                                         if (!item.lotNum) {
+                                        $.ajax({
+                                            url: '/StockOut/WHbycolumn',
+                                            method: 'GET',
+                                            data: {
+                                                Partnum: item.partNum,
+                                                docid: docNumber,
+                                                Company: Company,
+                                                username:username
+                                            },
+                                            success: function (response) {
+                                                   if (!response || response.length === 0) {
+                                                     selectElement.append($('<option>').val("").text(""));
+                                                    }
+                                                selectElement.empty();
+                                                    // เพิ่มค่า item.wareHouse เป็นค่าเริ่มต้น (ถ้ามี)
+                                                    if (item.wareHouse) {
+                                                        selectElement.append($('<option>').val(item.wareHouse).text(item.wareHouse+":"+" "+ item.whDescription));
+                                                    }
+                                                 // เติมข้อมูล Warehouse ที่ได้รับจาก API
+                                                $.each(response, function (index, WH) {
+                                                    if (WH.wareHouse !== item.wareHouse) {
+                                                        // ไม่เพิ่มค่าเดิมซ้ำ
+                                                        selectElement.append($('<option>').val(WH.wareHouse).text(WH.wareHouse+":"+WH.whDescription));
+                                                    }
+                                                });
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('Error fetching WHCODE:', error);
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'เกิดข้อผิดพลาด',
+                                                    text: 'ไม่สามารถโหลดข้อมูล WHCODE ได้'
+                                                });
+                                            }
+                                        });
+                                        }else {
+                                            // ถ้า lotNum มีค่า ให้ใช้ค่าเดิมจาก item
+                                            selectElement.append($('<option>').val(item.wareHouse).text(item.wareHouse+":"+item.whDescription));
+                                        }
+                                    })
+                                    .on('change', function () { // เมื่อเปลี่ยนค่าใน WH-dropdown
+                                        var selectedWH = $(this).val(); // ค่าที่ถูกเลือก
+                                        if (selectedWH) {
+                                            var binDropdown = $('<select>')
+                                                .addClass('Bin-dropdown') // เพิ่มคลาสสำหรับ Dropdown Bin
+                                                .css('width', '100%')
+                                                .prop('disabled', false) // เปิดใช้งาน Dropdown
+                                                .removeClass('dropdown-disabled'); // เอาสีเทาออก
+
+                                            // เรียก API /StockOut/binbycolumn
+                                            $.ajax({
+                                                url: '/StockOut/binbycolumn',
+                                                method: 'GET',
+                                                data: {
+                                                    Partnum: item.partNum,
+                                                    docid: docNumber,
+                                                    whcode: selectedWH
+                                                },
+                                                success: function (response) {
+                                                    binDropdown.empty();
+                                                    $.each(response, function (index, Bin) {
+                                                        binDropdown.append($('<option>').val(Bin.bin).text(Bin.bin+":"+Bin.wbDescription));
+                                                    });
+                                                      var onhandQty = response.length > 0 ? response[0].onhandQty : 0;
+
+                                                            // อัปเดตค่าในคอลัมน์ onhand
+                                                            row.find('.onhand').text(onhandQty);
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error('Error fetching Bin:', error);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'เกิดข้อผิดพลาด',
+                                                        text: 'ไม่สามารถโหลดข้อมูล Bin ได้'
+                                                    });
+                                                }
+                                            });
+
+                                            // ใส่ Dropdown Bin ในแถวใหม่
+                                            row.find('.Bin-container').empty().append(binDropdown);
+
+                                            // ตั้งค่าเมื่อ Bin-dropdown ถูกเปลี่ยนค่า
+                                            binDropdown.on('change', function () {
+                                                var selectedBin = $(this).val(); // ค่าที่ถูกเลือก
+                                                if (selectedBin) {
+                                                    var lotDropdown = $('<select>')
+                                                        .addClass('lot-dropdown') // เพิ่มคลาสสำหรับจัดการสไตล์
+                                                        .css('width', '100%')
+                                                        .append($('<option>').val('').text('กรุณาเลือก lot'))
+                                                        .prop('disabled', false); // เปิดใช้งาน Dropdown
+
+                                                    // เรียก API /StockOut/Lotnum
+                                                    $.ajax({
+                                                        url: '/StockOut/Lotnum',
+                                                        method: 'GET',
+                                                        data: {
+                                                            Partnum: item.partNum,
+                                                            WH: selectedWH,
+                                                            bin: selectedBin,
+                                                            Company: Company
+                                                        },
+                                                        success: function (response) {
+                                                            lotDropdown.empty();
+                                                            lotDropdown.append($('<option>').val('').text('กรุณาเลือก lot'));
+                                                            $.each(response, function (index, lot) {
+                                                                lotDropdown.append($('<option>').val(lot.lotNum).text(lot.lotNum));
+                                                            });
+                                                                     // ดึงค่า onhandQty จาก response (ถ้ามี)
+                                                            var onhandQty = response.length > 0 ? response[0].onhandQty : 0;
+
+                                                            // อัปเดตค่าในคอลัมน์ onhand
+                                                            row.find('.onhand').text(onhandQty);
+                                                        },
+                                                        error: function (xhr, status, error) {
+                                                            console.error('Error fetching lot numbers:', error);
+                                                            Swal.fire({
+                                                                icon: 'error',
+                                                                title: 'เกิดข้อผิดพลาด',
+                                                                text: 'ไม่สามารถโหลดข้อมูล lot number ได้'
+                                                            });
+                                                        }
+                                                    });
+
+                                                    // ใส่ Dropdown lot ในแถวใหม่
+                                                    row.find('.lot-container').empty().append(lotDropdown);
+                                                }
+                                            });
+                                        }
+                                    })
+                            )
+                        );
+    row.append(
+        $('<td>').addClass('Bin-container')
+            .append(
+                $('<select>')
+                    .addClass('Bin-dropdown')
+                    .css({
+                        'width': '100%',
+                        'background-color': item.lotNum ? '#f0f0f0' : '#ffffff', // ปิดสีถ้ามี lot
+                        'color': item.lotNum ? '#a0a0a0' : 'black', // เปลี่ยนสีข้อความ
+                        'pointer-events': item.lotNum ? 'none' : 'auto' // ปิดการคลิกถ้ามี lot
+                    })
+                    .prop('disabled', !!item.lotNum) // ปิด dropdown ถ้ามี lot
+                    .append($('<option>').val(item.bin).text(item.wbDescription)) // Default option from item.bin
+                    .each(function() {
+                        // ตรวจสอบว่า Warehouse มีค่าและ LotNum != ''
+                        if (item.wareHouse && item.lotNum == '') {
+                            // ถ้าตรงเงื่อนไข ให้เรียก API เพื่อดึงข้อมูล Bin
+                            var binDropdown = $(this); // Reference to the current dropdown
+                            $.ajax({
+                                url: '/StockOut/binbycolumn',
+                                method: 'GET',
+                                data: {
+                                    Partnum: item.partNum,
+                                    docid: docNumber,
+                                    whcode: item.wareHouse,
+                                    username:username
+                                },
+                                success: function (response) {
+                                    binDropdown.empty();  // ล้างข้อมูลเก่าใน dropdown
+
+                                    // เติมข้อมูล Bin ที่ได้รับจาก API
+                                    $.each(response, function (index, Bin) {
+                                        binDropdown.append($('<option>').val(Bin.bin).text(Bin.bin+":"+Bin.wbDescription)); // เพิ่ม Bin
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error fetching Bin:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        text: 'ไม่สามารถโหลดข้อมูล Bin ได้'
+                                    });
+                                }
+                            });
+                        }
+                    })
+                    .on('change', function() { // เมื่อมีการเลือกใน Bin-dropdown
+                        var selectedBin = $(this).val(); // ดึงค่า Bin ที่เลือก
+                        var selectedWH = row.find('.WH-dropdown').val(); // ดึงค่า Warehouse ที่เลือกจากแถวเดียวกัน
+
+                        // ตรวจสอบว่าได้เลือกค่า Warehouse และ Bin แล้วหรือยัง
+                        if (selectedWH && selectedBin) {
+                            // เรียก API เพื่อดึงข้อมูล Lotnum
+                            $.ajax({
+                                url: '/StockOut/Lotnum',
+                                method: 'GET',
+                                data: {
+                                    Partnum: item.partNum,
+                                    WH: selectedWH,
+                                    bin: selectedBin,
+                                    Company: Company
+                                },
+                                success: function (response) {
+                                    var lotDropdown = row.find('.lot-dropdown'); // Reference to the Lot dropdown
+                                    lotDropdown.empty(); // ล้างข้อมูลเก่าใน dropdown
+                                    lotDropdown.append($('<option>').val('').text('กรุณาเลือก lot'));
+
+                                    // เติมข้อมูล Lot ที่ได้รับจาก API
+                                    $.each(response, function (index, lot) {
+                                        lotDropdown.append($('<option>').val(lot.lotNum).text(lot.lotNum)); // เพิ่ม Lot
+                                    });
+
+                                    // ดึงค่า onhandQty จาก response (ถ้ามี)
+                                    var onhandQty = response.length > 0 ? response[0].onhandQty : 0;
+
+                                    // อัปเดตค่าในคอลัมน์ onhand
+                                    row.find('.onhand').text(onhandQty);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error fetching lot numbers:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        text: 'ไม่สามารถโหลดข้อมูล lot number ได้'
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'กรุณาเลือก Warehouse และ Bin',
+                                text: 'คุณต้องเลือกค่า Warehouse และ Bin ก่อน'
+                            });
+                        }
+                    })
+            )
+    );
+
+
+
+                        row.append($('<td>').text(item.lotNum));
+
+                            row.append(
+                                $('<td>')
+                                    .text(item.onhandQty)
+                                    .css('text-align', 'right')
+                                    .addClass('onhand') // เพิ่ม class onhand
+                            );
+                            row.append($('<td>')
+                            .text(item.uomOn) // แสดงค่า uomDesc ในช่องตาราง
+                            .attr('data-unit', item.dimCode) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                        );
+                        row.append($('<td>').text(item.totalQty.toFixed(2)).css('text-align', 'right'));
+
+                        var input = $('<input>').attr({
+                            type: 'number',
+                            class: 'form-control',
+                            value: item.totalQty.toFixed(2)
+                        }).css('text-align', 'right'); // บังคับให้ข้อความชิดขวา
+                        var newColumnValue = 0; // ค่าเริ่มต้นของคอลัมน์ใหม่
+                        // ตรวจสอบเงื่อนไข onhandQty
+                        if (item.onhandQty === 0) {
+                            input.attr('readonly', true); // ปิดการพิมพ์
+                            input.css({
+                                'background-color': '#e2e3df', // สีพื้นหลังที่ต้องการ
+                                'color': '#6c757d', // สีข้อความ (เลือกสีเทาเข้มเพื่อความชัดเจน)
+                                'pointer-events': 'none', // ปิดการคลิก
+                                'cursor': 'not-allowed' // เปลี่ยนเคอร์เซอร์เป็นไม่อนุญาต
+                            });
+                        }
+
+                        if (item.totalQty > 0) {
+                            input.attr('readonly', true); // ปิดการพิมพ์ถ้า totalQty มากกว่า 0 e2e3df
+                            input.css('background-color', '#e2e3df'); // เปลี่ยนสีพื้นหลัง (ตัวอย่าง: สีแดงอ่อน)
+                            newColumnValue = 1; // กำหนดค่าเป็น 1 เมื่อ totalQty มากกว่า 0
+
+                        } else {
+                            allTotalQtyGreaterThanZero = false; // ถ้ามี totalQty น้อยกว่าหรือเท่ากับ 0 ให้เปลี่ยนค่าเป็น false
+                        }
+                        // ตรวจสอบว่าค่า totalQty เป็น 0 หรือไม่
+                        if (item.totalQty === 0 && item.onhandQty != 0) {
+                            input.css({
+                                'background-color': '#fffdd0', // สีพื้นหลังเป็นสีเทา
+                                'color': 'black' // สีข้อความเป็นสีขาว (ถ้าจำเป็น)
+                            });
+                        }
+
+                        // เพิ่ม event listener สำหรับการคลิกที่ input
+                        input.on('click', function () {
+                            if (input.val() === '0.00') {
+                                input.val(''); // เคลียร์ค่าเป็นค่าว่าง
+                            }
+                        });
+
+                        row.append($('<td>').append(input));
+                        row.append($('<td>').text(item.detailID).css('display', 'none'));
+                        row.append($('<td>')
+                            .text(item.uomDesc) // แสดงค่า uomDesc ในช่องตาราง
+                            .attr('data-unit', item.unit) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                        );                        
+                        row.append($('<td>').text(0).css('display', 'none'));
+                        row.append($('<td>').text(item.plant).css('display', 'none'));
+                        row.append($('<td>').text(item.paidId).css('display', 'none'));
+
+
+                        row.append($('<td>').text(item.reason).css('display', 'none'));
+                        row.append($('<td>').text(item.convU).css('display', 'none'));
+                        row.append($('<td>').text(item.conDim).css('display', 'none'));
+                        row.append($('<td>').text(newColumnValue).css('display', 'none'));
+
+                        tableBody.append(row);
+
+                    });
+                    // ถ้ามี totalQty ที่น้อยกว่าหรือเท่ากับ 0 ให้เปลี่ยน label tabletotalQty เป็น true
+                    if (allTotalQtyGreaterThanZero) {
+                        $('#tabletotalQty').text('false'); // ถ้าทุกค่า totalQty มากกว่า 0 ให้แสดง 'false'
+                        checkApprovalButton();
+
+                    } else {
+                        $('#tabletotalQty').text('true'); // ถ้ามีค่า totalQty ที่น้อยกว่าหรือเท่ากับ 0 ให้แสดง 'true'
+                        checkApprovalButton();
+
+                    }
+
+
+                    $(document).ready(function () {
+                        $('#dataTable').DataTable({
+                            "paging": false,            // ปิดการแบ่งหน้า
+                            "scrollY": "400px",         // กำหนดความสูงของตารางที่มี scrollbar
+                            "scrollCollapse": true,     // ให้แสดง scrollbar เมื่อเนื้อหามีมากเกินไป
+                            "lengthChange": false,      // ซ่อนตัวเลือกเปลี่ยนจำนวนแถว
+                            "searching": true,         // เปิดใช้งานช่องค้นหา
+                            "info": false              // ซ่อนข้อความ "แสดงผล x ถึง y จาก z รายการ"
+                        });
+                    });
+
+
+                    hideLoadingOverlay();
+                    // เรียกฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+
+                },
+
+                error: function (xhr, status, error) {
+                    console.error('Error fetching BillOfLading data:', error);
+                    $('#dataTable tbody').empty();
+                    $('#approveBtn').hide(); // ซ่อนปุ่มในกรณีเกิดข้อผิดพลาด
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่พบข้อมูลนี้'
+                    });
+
+                    hideLoadingOverlay();
+                    // เรียกฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+                    checkApprovalButton();
+                }
+            });
+        }
+            // ฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+      function checkApprovalButton() {
+            // ตรวจสอบค่าใน #tabletotalQty และ #hasPermission
+            var tableTotalQtyValue = $('#tabletotalQty').text();
+            var hasPermissionValue = $('#hasPermission').text();
+
+            // ถ้าทั้งสองค่าไม่เป็น true ให้ซ่อนปุ่ม approve
+            if (tableTotalQtyValue !== 'true' || hasPermissionValue !== 'true' || hasPermissionValue === '') {
+                console.log('ปิดปุ่มทำงาน', 'tabletotalQty=', tableTotalQtyValue, 'hasPermissionValue=',hasPermissionValue);
+
+                $('#approveBtn').hide(); // ซ่อนปุ่ม approve
+            } else {
+                $('#approveBtn').show(); // แสดงปุ่ม approve
+                console.log('เปิดปุ่มทำงาน', 'tabletotalQty=', tableTotalQtyValue, 'hasPermissionValue=', hasPermissionValue);
+
+            }
+        }
+
+        });
+
+        $('#dataTable').on('blur', 'td input', function () {
+            var row = $(this).closest('tr'); // หาบรรทัดที่พิมพ์
+            var column0Value = row.find('td').eq(0).text().trim(); // ค่าของ column 0 ของแถวที่พิมพ์
+            var totalLot = parseFloat(row.find('td').eq(2).text().trim(), 10); // ค่าจาก column 14 ของแถวที่กำลังพิมพ์อยู่ (แปลงเป็นจำนวนเต็ม)
+            var onhandColumn = parseFloat(row.find('td').eq(6).text().trim()); // ดึงค่าจากคอลัมน์ที่ 6 (หน่วยนับ Onhand)
+            var QTYOnhand = parseFloat(row.find('td').eq(5).text().trim()); // ดึงค่าจากคอลัมน์ที่ 5 ( Onhand)
+
+            var unitColumn = row.find('td').eq(10).text().trim(); // ดึงค่าจากคอลัมน์ที่ 10 (หน่วยนับจ่าย)
+            var conu = parseFloat(row.find('td').eq(16).text().trim()); // ดึงค่าจากคอลัมน์ที่ 16
+            var cond = parseFloat(row.find('td').eq(17).text().trim()); // ดึงค่าจากคอลัมน์ที่ 17
+            var inputValue = $(this).val(); // ค่าที่พิมพ์ในช่อง input
+            var backgroundColor = $(this).css('background-color'); // ดึงสีพื้นหลังของ input
+
+            // เติม .00 หากไม่ได้พิมพ์ทศนิยม
+            if (!inputValue.includes('.') && inputValue != '' && inputValue != null) {
+                inputValue = inputValue + '.00';
+            }
+            $(this).val(inputValue); // อัปเดตค่าภายใน input
+
+            // เช็คว่า ช่อง input เป็น 0 หรือค่าว่าง
+            if (inputValue === '' || inputValue === '0.00') {
+                $(this).val('0.00'); // เติมค่า 0 ถ้าค่าภายในเป็นค่าว่างหรือ 0
+            }
+
+            // เช็คว่า หน่วยนับจ่ายเป็น KG และ หน่วยนับ Onhand เป็น TON
+            if (unitColumn !== '' && onhandColumn !== '') {
+                var kgValue = parseFloat(inputValue);
+                // เช็คว่าเป็นค่า 0.00 หรือ 0 แล้วแปลงเป็น 0 จริง
+                if (isNaN(kgValue) || kgValue <= 0) {
+                    kgValue = 0;
+                }
+                // ถ้าเป็นเลขและมีค่ามากกว่าศูนย์ แปลงจาก KG เป็น TON
+                if (!isNaN(kgValue) && kgValue > 0) {
+                    var tonValue = kgValue * (conu / cond);
+                    row.find('td').eq(13).text(tonValue); // อัปเดตค่าที่คอลัมน์ที่ 11
+                }
+            }
+            // เช็คว่า หน่วยนับจ่ายเป็น KG และ หน่วยนับ Onhand เป็น TON
+            else if (unitColumn === onhandColumn) {
+                var kgValue = parseFloat(inputValue);
+
+                // ถ้าเป็นเลขและมีค่ามากกว่าศูนย์ แปลงจาก KG เป็น TON
+                if (!isNaN(kgValue) && kgValue > 0) {
+                    var tonValue = kgValue; // แปลงเป็น TON
+                    row.find('td').eq(13).text(tonValue); // อัปเดตค่าที่คอลัมน์ที่ 11
+                }
+            }
+            if (tonValue > QTYOnhand) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ผลรวมเกินจำนวนที่กำหนด',
+                    text: 'ไม่สามารถจ่ายมากกว่า ของที่มีได้'
+                });
+                $(this).val('0.00'); // รีเซ็ตค่าภายใน input
+                return;
+            }
+
+            // คำนวณผลรวมของช่อง input ในแถวอื่นๆ ที่ column 0 ตรงกับค่า column 0 ของแถวที่พิมพ์
+            var totalSum = 0;
+
+            // เรียกใช้ .each() เพื่อหาผลรวมจากแถวที่มีค่า column 0 ตรงกัน
+            $('#dataTable tbody tr').each(function () {
+                var rowColumn0Value = $(this).find('td').eq(0).text().trim(); // ค่าของ column 0 ในแถวปัจจุบัน
+                var inputInRow = $(this).find('td input').val(); // ค่าของช่อง input ในแถวปัจจุบัน
+                var inputInRowNum = parseFloat(inputInRow);
+
+                // ถ้า column 0 ตรงกัน และช่อง input เป็นตัวเลขที่มากกว่า 0
+                if (rowColumn0Value === column0Value && !isNaN(inputInRowNum) && inputInRowNum > 0) {
+                    totalSum += inputInRowNum; // ผลรวมค่าที่พิมพ์ในช่อง input
+                }
+            });
+
+            // ตรวจสอบว่าผลรวมเกิน totalLot หรือไม่
+            if (totalSum > totalLot) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ผลรวมเกินจำนวนที่กำหนด',
+                    text: 'ไม่สามารถจ่ายเกินกว่ายอดเบิก'
+                });
+                $(this).val('0.00'); // รีเซ็ตค่าภายใน input
+                $('#countmultilot').text('0'); // รีเซ็ตผลรวม
+            } else {
+                // แสดงผลรวมใน totallot (สมมติว่า totallot คือองค์ประกอบที่แสดงผล)
+                $('#countmultilot').text(totalSum); // อัปเดตค่าผลรวมใน totallot
+                $('#totallot').text(totalLot); // อัปเดตค่าผลรวมใน totallot
+            }
+        });
+
+
+        $('#approveBtn').on('click', function () {
+            Swal.fire({
+                title: 'ยืนยันการจ่าย',
+                text: "เมื่อยืนยันการจ่ายแล้วไม่สามารถแก้ไขได้อีก แน่ใจหรือไม่",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ตกลง',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var today = new Date();
+                    var docDate = new Date($('#Datedoc2').val());
+                    var docNumber = $('#docNumber').val();
+                    var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+                    var selectedWHCode = $('#WareHouse').text();
+                    $.ajax({
+                        url: '/StockOut/Holiday',
+                        type: 'GET',
+                        data: { docNumber: $('#Datedoc2').val() },
+                        success: function (holidays) {
+                            var timeDiff = today - docDate;
+                            var dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                            var extraDays = 0;
+
+                            for (var i = 0; i < holidays.length; i++) {
+                                var holiday = new Date(holidays[i].holiday1);
+                                if (holiday >= docDate && holiday <= today) {
+                                    extraDays++;
+                                }
+                            }
+                            // Check for Sundays in the date range
+                            // var currentDate = new Date(docDate);
+                            // while (currentDate <= today) {
+                            //     if (currentDate.getDay() === 0) { // 0 represents Sunday
+                            //         extraDays++; // Add 1 if it's Sunday
+                            //     }
+                            //     currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+                            // }
+                            var allowedDays = 4 + extraDays;
+
+                            if (dayDiff > allowedDays) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'เลยกำหนดบันทึก',
+                                    text: 'ไม่สามารถบันทึกข้อมูลได้เนื่องจากวันที่เกินกำหนด (  4   วัน)'
+
+                                });
+                                return; // หยุดการทำงานที่เหลือ
+
+                            } else {
+                                var allZero = true;
+                                var isQtyExceed = false;
+                                var rowsToSave = [];
+                                var saveCounter = 0; // ตัวนับสำหรับจำนวนแถวที่บันทึกเสร็จแล้ว
+
+                                $('#dataTable tbody tr').each(function () {
+                                    var row = $(this);
+                                    var onHandQty = parseFloat(row.find('td').eq(7).text());
+                                    var qtyPaidInput = row.find('input'); // หา input ในแถวนี้
+
+                                    const company = sessionStorage.getItem('Company');
+                                     var WH = row.find('td').eq(4).find('select').val();
+
+                                    var DOCID = $('#docNumber').val();  // ใช้ id ของ input เพื่อดึงค่า
+
+                                    var cout = parseFloat(row.find('td').eq(2).text());
+                                    var qtyPaid = parseFloat(row.find('input').val());
+                                    var qrtchang = parseFloat(row.find('td').eq(13).text());
+                                    var Unit = row.find('td').eq(12).attr('data-unit');
+                                    var Dimcode = row.find('td').eq(8).attr('data-unit');
+
+                                    var DetailID = row.find('td').eq(11).text().trim();
+                                    var lotnum = row.find('td').eq(6).text().trim();
+                                    var part = row.find('td').eq(0).text().trim();
+                                    var log = row.find('td').eq(19).text().trim();
+                                    var Plant = row.find('td').eq(14).text(); // Example: Bin from column 8
+                                    var ReasonCode = row.find('td').eq(16).text(); // Example: LotNum from column 9
+                                    var bin =  row.find('td').eq(5).find('select').val();
+                                    var today = new Date();
+                                    var year = today.getFullYear(); // Get the full year
+                                    var month = (today.getMonth() + 1).toString().padStart(2, '0'); // Get month and pad with 0 if needed
+                                    var day = today.getDate().toString().padStart(2, '0'); // Get day and pad with 0 if needed
+                                    var trandate = year + '-' + month + '-' + day; // Format date as YYYY/MM/DD
+                                    // ถ้า trandate มีค่า จะใช้ค่าที่ป้อนมาจาก #Datedoc โดยตรง
+                                    if (trandate) {
+                                        trandate = '"' + trandate + '"';  // ครอบวันที่ด้วยเครื่องหมายคำพูด (ทำให้ Excel รับเป็นข้อความ)
+                                    }
+
+
+                                    var Createdate = today.getFullYear() + '-' +
+                                        ('0' + (today.getMonth() + 1)).slice(-2) + '-' +
+                                        ('0' + today.getDate()).slice(-2) + ' ' + // Format the date part
+                                        ('0' + today.getHours()).slice(-2) + ':' + // Format the hours part
+                                        ('0' + today.getMinutes()).slice(-2) + ':' + // Format the minutes part
+                                        ('0' + today.getSeconds()).slice(-2); // Format the seconds part
+
+
+                                    if (onHandQty > 0) {
+                                        allZero = false;
+                                    }
+
+                                    if (qtyPaid > cout || qrtchang > onHandQty) {
+                                        isQtyExceed = true;
+                                    }
+
+                                    // ตรวจสอบว่า qtyPaid = 0 หรือไม่
+                                    if (qtyPaid > 0 && log != 1) {
+                                        rowsToSave.push({
+                                            docNumber: docNumber,
+                                            DetailID: DetailID,
+                                            PayaQTY: qtyPaid,
+                                            Unit: Unit,
+                                            Createdate: Createdate,
+                                            username: username,
+                                            lotnum: lotnum,
+                                            partNum: part,
+                                            Plant: Plant,
+                                            trandate: trandate,
+                                            ReasonCode: ReasonCode,
+                                            bin: bin,
+                                            Dimcode: Dimcode,
+                                            company: company,
+                                            WH: WH,
+                                            DOCID: DOCID
+                                        });
+                                        qtyPaidInput.attr('readonly', true); // ปิดการพิมพ์ถ้า totalQty มากกว่า 0
+                                        qtyPaidInput.css('background-color', '#e2e3df'); // เปลี่ยนสีพื้นหลัง (ตัวอย่าง: สีแดงอ่อน)
+                                        row.find('td').eq(19).text('1');  // อัปเดตค่า log ใน td ที่ตำแหน่ง 18 (ซึ่งถือว่าเป็น column ที่มีค่า log)
+
+                                    }
+                                });
+
+                                if (allZero) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'ข้อผิดพลาด',
+                                        text: 'ไม่สามารถบันทึกข้อมูลได้เนื่องจาก On Hand เป็น 0'
+                                    });
+                                    return;
+                                }
+
+                                if (isQtyExceed) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'ข้อผิดพลาด',
+                                        text: 'ห้ามเกินยอดคงเหลือและยอดเบิก'
+                                    });
+                                    return;
+                                }
+                                if (rowsToSave.length === 0) {
+                                    // หากไม่มีข้อมูลใหม่ให้บันทึก
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'ไม่มีข้อมูลใหม่ให้บันทึกครับ',
+                                        showConfirmButton: true
+                                    });
+                                    return;
+                                }
+                                // บันทึกข้อมูลทั้งหมดใน rowsToSave
+                                if (rowsToSave.length > 0) {
+                                    // เก็บ promises เพื่อรอให้ทุกคำขอ AJAX เสร็จสมบูรณ์
+                                    let savePromises = [];
+                                    let paidIds = []; // เก็บ PaidID ที่ได้จากการตอบกลับ
+
+                                    rowsToSave.forEach(function (data, index) { // เพิ่ม index เพื่อติดตามคำขอที่เป็นปัญหา
+                                        // สร้าง Promise สำหรับแต่ละคำขอ AJAX
+                                        let ajaxPromise = $.ajax({
+                                            url: '/StockOut/SavePayment',
+                                            type: 'POST',
+                                            data: data,
+                                            success: function (response) {
+                                                console.log('Response for row', index + 1, ':', response); // Log ข้อมูลที่ได้รับจากเซิร์ฟเวอร์
+
+                                                if (response.hideButton) {
+                                                    $('#approveBtn').hide(); // ซ่อนปุ่ม
+                                                }
+                                                if (response.success) {
+                                                    console.log('Saved successfully. PaidID:', response.PaidID);
+                                                    console.log('Message:', response.message); // แสดง message ที่ได้รับจาก response
+                                                    // เก็บ PaidID และข้อมูลเพิ่มเติม
+                                                    paidIds.push({
+                                                        PaidID: response.paidID,
+                                                        DetailID: response.detailID,
+                                                        lotnum: response.lotnum,
+                                                        QTY: response.qty,
+                                                        partNum: response.partNum,        // หมายเลขชิ้นส่วน
+                                                        Plant: response.plant,            // โรงงาน
+                                                        trandate: response.trandate,       // วันที่ทำรายการ
+                                                        ReasonCode: response.reasonCode,
+                                                        bin: response.bin,
+                                                        Dimcode: response.dimcode,
+                                                        Company: response.company,
+                                                        DOCID: response.docid,
+                                                        WH: response.wh
+                                                    });
+                                                    // แสดง Swal.fire แจ้งเตือนเมื่อบันทึกข้อมูลสำเร็จ
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'บันทึกข้อมูลสำเร็จ',
+                                                        text: 'ข้อมูลการจ่ายได้ถูกบันทึกลงฐานข้อมูลแล้ว'
+                                                    });
+                                                } else {
+                                                    console.error('บันทึกไม่สำเร็จที่แถว', index + 1, 'ข้อมูล:', response); // ข้อมูลที่ได้รับจากเซิร์ฟเวอร์ไม่สำเร็จ
+                                                }
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('เกิดข้อผิดพลาดในการบันทึกที่แถว', index + 1, ':', error); // ข้อผิดพลาดในคำขอ AJAX
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'ข้อผิดพลาด',
+                                                    text: 'ไม่สามารถบันทึกข้อมูลลงฐานข้อมูลได้'
+                                                });
+                                            }
+                                        });
+
+                                        // เพิ่ม Promise ของแต่ละ AJAX ลงใน array
+                                        savePromises.push(ajaxPromise);
+                                    });
+
+                                    // รอให้ทุกคำขอ AJAX เสร็จสมบูรณ์
+                                    $.when.apply($, savePromises).done(function () {
+                                        console.log('จำนวนแถวที่บันทึกสำเร็จทั้งหมด:', paidIds.length);
+                                        console.log('PaidIds ที่บันทึกสำเร็จ:', paidIds); // แสดงข้อมูล PaidID ที่บันทึกได้
+                                        generateCSV(paidIds); // สร้างไฟล์ CSV หลังจากทุกคำขอสำเร็จ
+                                    });
+                                }
+
+
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'ข้อผิดพลาด',
+                                text: 'ไม่สามารถตรวจสอบวันหยุดได้'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+            function generateCSV(paidIds) {
+        // กำหนด header ตามที่ต้องการ
+        var header = ["Company", "Plant", "Trandate", "PartNum", "TranQTY", "UM", "LotNum", "ReasonCode", "FromWarehouseCode", "FromBinNum", "TranReference"];
+
+        // จัดรูปแบบข้อมูลให้ตรงกับ header
+        var rows = paidIds.map(item => [
+            item.Company || "",
+            item.Plant || "",
+            item.trandate || "",
+            item.partNum || "",
+            (isNaN(item.QTY) ? 0 : parseFloat(item.QTY)).toFixed(2) || "",
+            item.Dimcode || "",
+            item.lotnum || "",
+            item.ReasonCode || "",
+            item.WH || "",
+            item.bin || "",
+            item.PaidID + "/" + item.DetailID + "/" + item.DOCID || ""
+        ]);
+
+        // รวม header และ rows เป็น CSV
+        let csvContent = [header.join(","), ...rows.map(row => row.join(","))].join("\n");
+           const company = sessionStorage.getItem('Company');
+
+        // ดึงค่าจาก textbox
+        var DOCID = $('#docNumber').val();
+        var selectedWHCode = $('#WareHouse').text();
+            var now = new Date();
+
+        // ดึงค่า วัน เดือน ปี และเวลา โดยไม่มี /
+        var formattedDate = now.getFullYear().toString() +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            String(now.getDate()).padStart(2, '0') +
+            String(now.getHours()).padStart(2, '0') +
+            String(now.getMinutes()).padStart(2, '0') +
+            String(now.getSeconds()).padStart(2, '0');
+        var fileName = company + selectedWHCode + DOCID + formattedDate + ".csv";
+        //เปลี่ยนใหม่
+        // ส่งข้อมูล CSV ไปยังเซิร์ฟเวอร์
+        $.ajax({
+            url: '/StockOut/SaveCsvToServer',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                CsvData: csvContent, // ใช้ชื่อเดียวกับที่เซิร์ฟเวอร์ต้องการ
+                FileName: fileName
+            }),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ',
+                    text: response.message
+                });
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: xhr.responseText || 'ไม่สามารถบันทึกไฟล์ได้'
+                });
+            }
+        });
+    }
+
+
+
+        function showLoadingOverlay() {
+            $.LoadingOverlay("show", {
+                image: "",
+                fontawesome: "fa-solid fa-truck-front fa-bounce",
+            });
+        }
+
+        function hideLoadingOverlay() {
+            $.LoadingOverlay("hide");
+        }
+    });
+</script>
+<script>
+    function showLoadingOverlay() {
+        $.LoadingOverlay("show", {
+            image: "",
+            fontawesome: "fa-solid fa-truck-front fa-bounce",
+        });
+    }
+
+    function hideLoadingOverlay() {
+        $.LoadingOverlay("hide");
+    }
+    $(window).on('load', function () {
+        // var docNumber = $('#docNumber').val();
+        var WHCode = $('#docStatus').val();
+        // var username = '@ViewBag.Username'; // Retrieve Username from ViewBag
+        // var Company = '@ViewBag.Company';
+            const docNumber = sessionStorage.getItem('docId');
+            const date = sessionStorage.getItem('date');
+            const username = sessionStorage.getItem('username');
+            const Company = sessionStorage.getItem('Company');
+            $('#docNumber').val(docNumber);
+            $('#docDate').val(date);
+
+        fetchTableBill();
+
+        $.ajax({
+            url: '/StockOut/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+            method: 'GET',
+            data: {
+                docNumber: docNumber,
+                WHCode: "",
+                Company: Company
+            },
+            success: function (response) {
+                // เก็บข้อมูลที่ได้จากการค้นหาไว้ในตัวแปร BE
+                $('#BE').val(response[0].description);
+                $('#dep').val(response[0].depName);
+                $('#Plant').val(response[0].name);
+                // ดึงค่าจาก response และตัดข้อความตั้งแต่ T เป็นต้นไป
+                var reqDate = response[0].reqDate.split('T')[0]; // ได้ค่า "2024-12-23"
+
+                // แยกปี เดือน วันออกจากกัน
+                var parts = reqDate.split('-'); // ["2024", "12", "23"]
+                var formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0]; // "23/12/2024"
+                $('#Datedoc2').val(response[0].reqDate);
+
+                // แสดงผลใน input
+                $('#Datedoc').val(formattedDate);
+                $('#BEcuse').val(response[0].remark);
+                $('#DetailID').text(response[0].detailID);
+
+                var BE = response;
+
+                // ทดสอบการแสดงข้อมูล BE
+                console.log('ข้อมูลที่ได้จาก BillOfLading:', BE);
+
+                // คุณสามารถดำเนินการเพิ่มเติมกับข้อมูลที่เก็บใน BE ได้ที่นี่
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching BillOfLading data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่พบข้อมูล GetBillOfLading'
+                });
+                hideLoadingOverlay();
+            },
+            complete: function () {
+                hideLoadingOverlay();
+            }
+        });
+        // var statusFromServer = '@ViewData["Status"]';
+        // var Company = '@ViewBag.Company';
+
+        $.ajax({
+            url: '/StockOut/WHDescription',
+            type: 'GET',
+            data: { docNumber: docNumber,
+                Company: Company
+            },
+            success: function (data) {
+                $('#docStatus').empty(); // ล้าง dropdown
+
+                // เพิ่มตัวเลือกใน dropdown
+                $.each(data, function (index, item) {
+                    $('#docStatus').append(
+                        $('<option>', { value: item.description }).text(item.description)
+                    );
+                });
+
+                // ตั้งค่า ViewData["Status"] เป็นค่าเริ่มต้น
+                $('#docStatus option').each(function () {
+                    if ($(this).val() === statusFromServer) {
+                        $(this).prop('selected', true);
+                        $('#docStatus').focus();
+                    }
+                });
+
+                // ตรวจสอบสิทธิ์โดยใช้ docStatus
+                const selectedDocStatus = $('#docStatus').val();
+                validateWarehousePermission(username, selectedDocStatus);
+
+                // เรียกข้อมูลคลังสินค้า
+                fetchWarehouseData(selectedDocStatus);
+            },
+            error: function () {
+                Swal.fire('Error', 'ไม่สามารถดึงข้อมูลได้', 'error');
+            }
+        });
+
+        // ฟังก์ชันตรวจสอบสิทธิ์
+        // function validateWarehousePermission(username, docStatus) {
+        //     $.ajax({
+        //         url: '/StockOut/BPI_BillOfLoading_Wh',
+        //         type: 'GET',
+        //         data: { username: username },
+        //         success: function (data) {
+        //             const hasPermission = data.some(item => item.description === docStatus);
+        //             $('#hasPermission').text(hasPermission ? 'true' : 'false');
+        //         },
+        //         error: function () {
+        //             Swal.fire('Error', 'ไม่สามารถตรวจสอบสิทธิ์ได้', 'error');
+        //         }
+        //     });
+        // }
+
+
+        // Function สำหรับดึงข้อมูล `allWH` ตามค่า `Description`
+        function fetchWarehouseData(description) {
+            $.ajax({
+                url: '/StockOut/WHCODE',
+                type: 'GET',
+                data: { Description: description }, // ส่ง Description ที่ถูกเลือกไปยัง API
+                success: function (data) {
+                    // ล้าง Dropdown ก่อน
+                    $('#WareHouse').empty();
+
+                    // วนลูปข้อมูลที่ได้จาก API เพื่อเพิ่มข้อมูลลงใน Dropdown
+                    $.each(data, function (index, item) {
+                        $('#WareHouse').append(
+                            $('<option>', { value: item.warehouseCode })
+                                .text(item.warehouseCode)
+                        );
+                    });
+
+                    // หลังจากโหลด `#WareHouse` เสร็จสิ้น ให้ดึงข้อมูล TableBill โดยใช้ WHCode ตัวแรกใน Dropdown
+                    const selectedWHCode = $('#WareHouse').text(); // ค่าของ WHCode ที่เลือกแรก
+                    if (selectedWHCode) {
+                        // fetchBillOfLading(docNumber, selectedWHCode);
+                    }
+                },
+                error: function () {
+                    Swal.fire('Error', 'ไม่สามารถดึงข้อมูล WHCODE ได้', 'error');
+                }
+            });
+        }
+        function fetchTableBill() {
+            const username = sessionStorage.getItem('username');
+            const Company = sessionStorage.getItem('Company');
+
+            $.ajax({
+                url: '/StockOut/TableBill', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                method: 'GET',
+                data: {
+                    docNumber: docNumber,
+                    Company: Company,
+                    username:username
+                },
+                success: function (response) {
+                       // ตรวจสอบว่าข้อมูลว่างเปล่าหรือไม่
+                    if (!response || response.length === 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่มีสิทธิ',
+                            text: 'User ไม่มีสิทธิในการเข้าถึงข้อมูลนี้',
+                        });
+                        return;
+                    }
+                    // $('#approveBtn').show(); // แสดงปุ่มเสมอ
+                    var allTotalQtyGreaterThanZero = true; // ตัวแปรตรวจสอบว่า totalQty ทั้งหมดมากกว่า 0 หรือไม่
+                    // ลบ DataTable เก่า (ถ้ามี)
+                    if ($.fn.DataTable.isDataTable('#dataTable')) {
+                        $('#dataTable').DataTable().clear().destroy();
+                    }
+
+
+                    var tableBody = $('#dataTable tbody');              
+                    tableBody.empty();
+
+                    $.each(response, function (index, item) {
+                        var row = $('<tr>');
+
+                        row.append($('<td>').text(item.partNum));
+                        row.append($('<td>').text(item.partDescription));
+                        row.append($('<td>').text(item.qty.toFixed(2)).css('text-align', 'right'));
+                        row.append($('<td>')
+                          .text(item.uomDesc) // แสดงค่า uomDesc ในช่องตาราง
+                          .attr('data-unit', item.unit) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                         );   
+                          row.append(
+                            $('<td>').append(
+                                $('<select>')
+                                    .addClass('WH-dropdown') // เพิ่มคลาสสำหรับจัดการสไตล์
+                                 .css({
+                                'width': '100%',
+                                'background-color': item.lotNum ? '#f0f0f0' : '', // เปลี่ยนสีพื้นหลัง
+                                'color': item.lotNum ? '#a0a0a0' : 'black' // เปลี่ยนสีข้อความ
+                            })
+                            .prop('disabled', item.lotNum ? true : false) // ปิดการคลิกถ้ามี lot
+                                        .append($('<option>').val(item.wareHouse).text(item.wareHouse+" "+item.whDescription)) // กำหนดค่าเริ่มต้น
+
+                                    .each(function () {
+                                        var selectElement = $(this); // อ้างอิงถึง select ที่สร้างขึ้น
+                                         if (!item.lotNum) {
+                                        $.ajax({
+                                            url: '/StockOut/WHbycolumn',
+                                            method: 'GET',
+                                            data: {
+                                                Partnum: item.partNum,
+                                                docid: docNumber,
+                                                Company: Company,
+                                                username:username
+                                            },
+                                            success: function (response) {
+                                                 if (response.success === false) {
+                                                     selectElement.append($('<option>').val("").text(""));
+                                                    }
+                                                selectElement.empty();
+                                                    // เพิ่มค่า item.wareHouse เป็นค่าเริ่มต้น (ถ้ามี)
+                                                    if (item.wareHouse) {
+                                                        selectElement.append($('<option>').val(item.wareHouse).text(item.wareHouse+":"+" "+ item.whDescription));
+                                                    }
+                                                 // เติมข้อมูล Warehouse ที่ได้รับจาก API
+                                                $.each(response, function (index, WH) {
+                                                    if (item.wareHouse !== item.wareHouse) {
+                                                        // ไม่เพิ่มค่าเดิมซ้ำ
+                                                        selectElement.append($('<option>').val(WH.wareHouse).text(WH.wareHouse+" "+WH.whDescription));
+                                                    }
+                                                });
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.error('Error fetching WHCODE:', error);
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'เกิดข้อผิดพลาด',
+                                                    text: 'ไม่สามารถโหลดข้อมูล WHCODE ได้'
+                                                });
+                                            }
+                                        });
+                                        }else {
+                                            // ถ้า lotNum มีค่า ให้ใช้ค่าเดิมจาก item
+                                            selectElement.append($('<option>').val(item.wareHouse).text(item.wareHouse+":"+item.whDescription));
+                                        }
+                                    })
+                                    .on('change', function () { // เมื่อเปลี่ยนค่าใน WH-dropdown
+                                        var selectedWH = $(this).val(); // ค่าที่ถูกเลือก
+                                        if (selectedWH) {
+                                            var binDropdown = $('<select>')
+                                                .addClass('Bin-dropdown') // เพิ่มคลาสสำหรับ Dropdown Bin
+                                                .css('width', '100%')
+                                                .prop('disabled', false) // เปิดใช้งาน Dropdown
+                                                .removeClass('dropdown-disabled'); // เอาสีเทาออก
+
+                                            // เรียก API /StockOut/binbycolumn
+                                            $.ajax({
+                                                url: '/StockOut/binbycolumn',
+                                                method: 'GET',
+                                                data: {
+                                                    Partnum: item.partNum,
+                                                    docid: docNumber,
+                                                    whcode: selectedWH
+                                                },
+                                                success: function (response) {
+                                                    binDropdown.empty();
+                                                    $.each(response, function (index, Bin) {
+                                                        binDropdown.append($('<option>').val(Bin.bin).text(Bin.bin+":"+Bin.wbDescription));
+                                                    });
+                                                      var onhandQty = response.length > 0 ? response[0].onhandQty : 0;
+
+                                                            // อัปเดตค่าในคอลัมน์ onhand
+                                                            row.find('.onhand').text(onhandQty);
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error('Error fetching Bin:', error);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'เกิดข้อผิดพลาด',
+                                                        text: 'ไม่สามารถโหลดข้อมูล Bin ได้'
+                                                    });
+                                                }
+                                            });
+
+                                            // ใส่ Dropdown Bin ในแถวใหม่
+                                            row.find('.Bin-container').empty().append(binDropdown);
+
+                                            // ตั้งค่าเมื่อ Bin-dropdown ถูกเปลี่ยนค่า
+                                            binDropdown.on('change', function () {
+                                                var selectedBin = $(this).val(); // ค่าที่ถูกเลือก
+                                                if (selectedBin) {
+                                                    var lotDropdown = $('<select>')
+                                                        .addClass('lot-dropdown') // เพิ่มคลาสสำหรับจัดการสไตล์
+                                                        .css('width', '100%')
+                                                        .append($('<option>').val('').text('กรุณาเลือก lot'))
+                                                        .prop('disabled', false); // เปิดใช้งาน Dropdown
+
+                                                    // เรียก API /StockOut/Lotnum
+                                                    $.ajax({
+                                                        url: '/StockOut/Lotnum',
+                                                        method: 'GET',
+                                                        data: {
+                                                            Partnum: item.partNum,
+                                                            WH: selectedWH,
+                                                            bin: selectedBin,
+                                                            Company: Company
+                                                        },
+                                                        success: function (response) {
+                                                            lotDropdown.empty();
+                                                            lotDropdown.append($('<option>').val('').text('กรุณาเลือก lot'));
+                                                            $.each(response, function (index, lot) {
+                                                                lotDropdown.append($('<option>').val(lot.lotNum).text(lot.lotNum));
+                                                            });
+                                                                     // ดึงค่า onhandQty จาก response (ถ้ามี)
+                                                            var onhandQty = response.length > 0 ? response[0].onhandQty : 0;
+
+                                                            // อัปเดตค่าในคอลัมน์ onhand
+                                                            row.find('.onhand').text(onhandQty);
+                                                        },
+                                                        error: function (xhr, status, error) {
+                                                            console.error('Error fetching lot numbers:', error);
+                                                            Swal.fire({
+                                                                icon: 'error',
+                                                                title: 'เกิดข้อผิดพลาด',
+                                                                text: 'ไม่สามารถโหลดข้อมูล lot number ได้'
+                                                            });
+                                                        }
+                                                    });
+
+                                                    // ใส่ Dropdown lot ในแถวใหม่
+                                                    row.find('.lot-container').empty().append(lotDropdown);
+                                                }
+                                            });
+                                        }
+                                    })
+                            )
+                        );
+    row.append(
+        $('<td>').addClass('Bin-container')
+            .append(
+                $('<select>')
+                    .addClass('Bin-dropdown')
+                    .css({
+                        'width': '100%',
+                        'background-color': item.lotNum ? '#f0f0f0' : '#ffffff', // ปิดสีถ้ามี lot
+                        'color': item.lotNum ? '#a0a0a0' : 'black', // เปลี่ยนสีข้อความ
+                        'pointer-events': item.lotNum ? 'none' : 'auto' // ปิดการคลิกถ้ามี lot
+                    })
+                    .prop('disabled', !!item.lotNum) // ปิด dropdown ถ้ามี lot
+                    .append($('<option>').val(item.bin).text(item.bin+" "+item.wbDescription)) // Default option from item.bin
+                    .each(function() {
+                        // ตรวจสอบว่า Warehouse มีค่าและ LotNum != ''
+                        if (item.wareHouse && item.lotNum == '') {
+                            // ถ้าตรงเงื่อนไข ให้เรียก API เพื่อดึงข้อมูล Bin
+                            var binDropdown = $(this); // Reference to the current dropdown
+                            $.ajax({
+                                url: '/StockOut/binbycolumn',
+                                method: 'GET',
+                                data: {
+                                    Partnum: item.partNum,
+                                    docid: docNumber,
+                                    whcode: item.wareHouse,
+                                    username:username
+                                },
+                                success: function (response) {
+                                    binDropdown.empty();  // ล้างข้อมูลเก่าใน dropdown
+
+                                    // เติมข้อมูล Bin ที่ได้รับจาก API
+                                    $.each(response, function (index, Bin) {
+                                        binDropdown.append($('<option>').val(Bin.bin).text(Bin.bin+":"+Bin.wbDescription)); // เพิ่ม Bin
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error fetching Bin:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        text: 'ไม่สามารถโหลดข้อมูล Bin ได้'
+                                    });
+                                }
+                            });
+                        }
+                    })
+                    .on('change', function() { // เมื่อมีการเลือกใน Bin-dropdown
+                        var selectedBin = $(this).val(); // ดึงค่า Bin ที่เลือก
+                        var selectedWH = row.find('.WH-dropdown').val(); // ดึงค่า Warehouse ที่เลือกจากแถวเดียวกัน
+
+                        // ตรวจสอบว่าได้เลือกค่า Warehouse และ Bin แล้วหรือยัง
+                        if (selectedWH && selectedBin) {
+                            // เรียก API เพื่อดึงข้อมูล Lotnum
+                            $.ajax({
+                                url: '/StockOut/Lotnum',
+                                method: 'GET',
+                                data: {
+                                    Partnum: item.partNum,
+                                    WH: selectedWH,
+                                    bin: selectedBin,
+                                    Company: Company
+                                },
+                                success: function (response) {
+                                    var lotDropdown = row.find('.lot-dropdown'); // Reference to the Lot dropdown
+                                    lotDropdown.empty(); // ล้างข้อมูลเก่าใน dropdown
+                                    lotDropdown.append($('<option>').val('').text('กรุณาเลือก lot'));
+
+                                    // เติมข้อมูล Lot ที่ได้รับจาก API
+                                    $.each(response, function (index, lot) {
+                                        lotDropdown.append($('<option>').val(lot.lotNum).text(lot.lotNum)); // เพิ่ม Lot
+                                    });
+
+                                    // ดึงค่า onhandQty จาก response (ถ้ามี)
+                                    var onhandQty = response.length > 0 ? response[0].onhandQty : 0;
+
+                                    // อัปเดตค่าในคอลัมน์ onhand
+                                    row.find('.onhand').text(onhandQty);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error fetching lot numbers:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'เกิดข้อผิดพลาด',
+                                        text: 'ไม่สามารถโหลดข้อมูล lot number ได้'
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'กรุณาเลือก Warehouse และ Bin',
+                                text: 'คุณต้องเลือกค่า Warehouse และ Bin ก่อน'
+                            });
+                        }
+                    })
+            )
+    );
+
+
+
+                        row.append($('<td>').text(item.lotNum));
+
+                            row.append(
+                                $('<td>')
+                                    .text(item.onhandQty)
+                                    .css('text-align', 'right')
+                                    .addClass('onhand') // เพิ่ม class onhand
+                            );
+                            row.append($('<td>')
+                            .text(item.uomOn) // แสดงค่า uomDesc ในช่องตาราง
+                            .attr('data-unit', item.dimCode) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                        );
+                        row.append($('<td>').text(item.totalQty.toFixed(2)).css('text-align', 'right'));
+
+                        var input = $('<input>').attr({
+                            type: 'number',
+                            class: 'form-control',
+                            value: item.totalQty.toFixed(2)
+                        }).css('text-align', 'right'); // บังคับให้ข้อความชิดขวา
+                        var newColumnValue = 0; // ค่าเริ่มต้นของคอลัมน์ใหม่
+                        // ตรวจสอบเงื่อนไข onhandQty
+                        if (item.onhandQty === 0) {
+                            input.attr('readonly', true); // ปิดการพิมพ์
+                            input.css({
+                                'background-color': '#e2e3df', // สีพื้นหลังที่ต้องการ
+                                'color': '#6c757d', // สีข้อความ (เลือกสีเทาเข้มเพื่อความชัดเจน)
+                                'pointer-events': 'none', // ปิดการคลิก
+                                'cursor': 'not-allowed' // เปลี่ยนเคอร์เซอร์เป็นไม่อนุญาต
+                            });
+                        }
+
+                        if (item.totalQty > 0) {
+                            input.attr('readonly', true); // ปิดการพิมพ์ถ้า totalQty มากกว่า 0 e2e3df
+                            input.css('background-color', '#e2e3df'); // เปลี่ยนสีพื้นหลัง (ตัวอย่าง: สีแดงอ่อน)
+                            newColumnValue = 1; // กำหนดค่าเป็น 1 เมื่อ totalQty มากกว่า 0
+
+                        } else {
+                            allTotalQtyGreaterThanZero = false; // ถ้ามี totalQty น้อยกว่าหรือเท่ากับ 0 ให้เปลี่ยนค่าเป็น false
+                        }
+                        // ตรวจสอบว่าค่า totalQty เป็น 0 หรือไม่
+                        if (item.totalQty === 0 && item.onhandQty != 0) {
+                            input.css({
+                                'background-color': '#fffdd0', // สีพื้นหลังเป็นสีเทา
+                                'color': 'black' // สีข้อความเป็นสีขาว (ถ้าจำเป็น)
+                            });
+                        }
+
+                        // เพิ่ม event listener สำหรับการคลิกที่ input
+                        input.on('click', function () {
+                            if (input.val() === '0.00') {
+                                input.val(''); // เคลียร์ค่าเป็นค่าว่าง
+                            }
+                        });
+
+                        row.append($('<td>').append(input));
+                        row.append($('<td>').text(item.detailID).css('display', 'none'));
+                        row.append($('<td>')
+                            .text(item.uomDesc) // แสดงค่า uomDesc ในช่องตาราง
+                            .attr('data-unit', item.unit) // เพิ่ม attribute data-unit เพื่อเก็บค่า item.unit
+                        );                        
+                        row.append($('<td>').text(0).css('display', 'none'));
+                        row.append($('<td>').text(item.plant).css('display', 'none'));
+                        row.append($('<td>').text(item.paidId).css('display', 'none'));
+
+
+                        row.append($('<td>').text(item.reason).css('display', 'none'));
+                        row.append($('<td>').text(item.convU).css('display', 'none'));
+                        row.append($('<td>').text(item.conDim).css('display', 'none'));
+                        row.append($('<td>').text(newColumnValue).css('display', 'none'));
+
+                        tableBody.append(row);
+
+                    });
+                    // ถ้ามี totalQty ที่น้อยกว่าหรือเท่ากับ 0 ให้เปลี่ยน label tabletotalQty เป็น true
+                    if (allTotalQtyGreaterThanZero) {
+                        $('#tabletotalQty').text('false'); // ถ้าทุกค่า totalQty มากกว่า 0 ให้แสดง 'false'
+                        checkApprovalButton();
+
+                    } else {
+                        $('#tabletotalQty').text('true'); // ถ้ามีค่า totalQty ที่น้อยกว่าหรือเท่ากับ 0 ให้แสดง 'true'
+                        checkApprovalButton();
+
+                    }
+
+
+                    $(document).ready(function () {
+                        $('#dataTable').DataTable({
+                            "paging": false,            // ปิดการแบ่งหน้า
+                            "scrollY": "400px",         // กำหนดความสูงของตารางที่มี scrollbar
+                            "scrollCollapse": true,     // ให้แสดง scrollbar เมื่อเนื้อหามีมากเกินไป
+                            "lengthChange": false,      // ซ่อนตัวเลือกเปลี่ยนจำนวนแถว
+                            "searching": true,         // เปิดใช้งานช่องค้นหา
+                            "info": false              // ซ่อนข้อความ "แสดงผล x ถึง y จาก z รายการ"
+                        });
+                    });
+
+
+                    hideLoadingOverlay();
+                    // เรียกฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+
+                },
+
+                error: function (xhr, status, error) {
+                    console.error('Error fetching BillOfLading data:', error);
+                    $('#dataTable tbody').empty();
+                    $('#approveBtn').hide(); // ซ่อนปุ่มในกรณีเกิดข้อผิดพลาด
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่พบข้อมูลนี้'
+                    });
+
+                    hideLoadingOverlay();
+                    // เรียกฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+                    checkApprovalButton();
+                }
+            });
+        }
+        // ฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+        function checkApprovalButton() {
+            // ตรวจสอบค่าใน #tabletotalQty และ #hasPermission
+            var tableTotalQtyValue = $('#tabletotalQty').text();
+            var hasPermissionValue = $('#hasPermission').text();
+
+            // ถ้าทั้งสองค่าไม่เป็น true ให้ซ่อนปุ่ม approve
+            if (tableTotalQtyValue !== 'true' || hasPermissionValue !== 'true' || hasPermissionValue === '') {
+                console.log('ปิดปุ่มทำงาน', 'tabletotalQty=', tableTotalQtyValue, 'hasPermissionValue=',hasPermissionValue);
+
+                $('#approveBtn').hide(); // ซ่อนปุ่ม approve
+            } else {
+                $('#approveBtn').show(); // แสดงปุ่ม approve
+                console.log('เปิดปุ่มทำงาน', 'tabletotalQty=', tableTotalQtyValue, 'hasPermissionValue=', hasPermissionValue);
+
+            }
+        }
+
+        $(document).ready(function () {
+
+            $('#docStatus').on('change', function () {
+                // ตรวจสอบและทำลาย DataTable เก่า (ถ้ามี)
+                if ($.fn.DataTable.isDataTable('#dataTable')) {
+                    $('#dataTable').DataTable().clear().destroy(); // ล้างข้อมูลและทำลาย DataTable
+                }
+
+                var selectedWHDescription = $(this).val();
+                var selectedWHCode = $('#WareHouse').text();
+
+                fetchWarehouseData(selectedWHDescription);
+                fetchTableBill(selectedWHCode);
+
+                $.ajax({
+                    url: '/StockOut/BPI_BillOfLoading_Wh',
+                    type: 'GET',
+                    data: { username: username },
+                    success: function (data) {
+                        // ตรวจสอบว่า selectedWHDescription ตรงกับ item.description ใดๆ ในข้อมูลที่ส่งกลับมา
+                        const hasPermission = data.some(item => item.description === selectedWHDescription);
+
+                        // เปลี่ยนค่าของ label hasPermission เป็น true หรือ false
+                        $('#hasPermission').text(hasPermission ? 'true' : 'false');
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'ไม่สามารถตรวจสอบสิทธิ์ได้', 'error');
+                    }
+                });
+                // เรียกฟังก์ชันตรวจสอบการแสดงปุ่ม approve
+                checkApprovalButton();
+            });
+        });
+
+    });
+</script>

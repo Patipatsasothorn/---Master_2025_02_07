@@ -1,0 +1,1429 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+                        <style>
+                            /* Wrapper สำหรับจัดการ layout */
+                            .wrapper {
+                                display: flex;
+                                flex-wrap: wrap;
+                                width: 100%;
+                                min-height: 100vh;
+                            }
+
+                            /* Wrapper สำหรับ sidebar */
+                            .side {
+                                flex: 0 0 20%;
+                                background-color: #ccc;
+                                padding: 0;
+                                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                            }
+
+                                .side ul {
+                                    list-style-type: none;
+                                    padding: 0;
+                                    margin: 0;
+                                }
+
+                                    .side ul li {
+                                        display: flex;
+                                        align-items: center;
+                                        width: 100%;
+                                        padding: 10px 15px;
+                                        box-sizing: border-box;
+                                        font-size: 18px;
+                                        transition: background-color 0.3s, color 0.3s;
+                                    }
+
+                                        .side ul li:hover {
+                                            background-color: #01579b; /* สีฟ้าเข้ม */
+                                            color: #fff; /* เปลี่ยนสีข้อความเป็นสีขาว */
+                                        }
+
+                                        .side ul li i {
+                                            margin-right: 15px; /* ระยะห่างระหว่างไอคอนกับข้อความ */
+                                            font-size: 20px; /* ขนาดของไอคอน */
+                                            color: inherit; /* ใช้สีเดียวกับข้อความ */
+                                        }
+
+                                        .side ul li a {
+                                            text-decoration: none;
+                                            color: inherit; /* ใช้สีเดียวกับ li เมื่อ hover */
+                                            display: flex;
+                                            align-items: center;
+                                            width: 100%;
+                                            height: 100%;
+                                        }
+
+
+
+                            /* Wrapper สำหรับ main content */
+                            .main-content {
+                                flex: 1;
+                                padding: 20px;
+                                background-color: #fff;
+                            }
+
+                                .main-content h1 {
+                                    margin-top: 0;
+                                }
+
+                            .content-section {
+                                display: none;
+                            }
+
+                            .center-align {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                        </style>
+
+    <style>
+        /* .bootstrap-select .dropdown-toggle .filter-option {
+                                                                                                    padding: 8px 12px;
+                                                                                                } */
+
+        .bootstrap-select .dropdown-toggle {
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+        }
+
+        /* .bootstrap-select .dropdown-menu {
+                                                                            border: 1px solid #ccc !important;
+                                                                            border-radius: 4px !important;
+                                                                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+                                                                            width: 100% !important;
+                                                                            max-width: 100% !important;
+                                                                        } */
+
+        .bootstrap-select.show .dropdown-toggle {
+            border-color: #66afe9 !important;
+        }
+
+    </style>
+}
+
+
+<div style="font-family:Kanit;">
+    <div class="wrapper">
+        <aside class="side">
+            <ul>
+                <li class="d-flex align-items-center active" id="ManageBuildingLi">
+                    <div class="col-sm-2 text-center">
+                        <i class="fa-solid fa-building-circle-check"></i>
+                    </div>
+                    <div class="col-sm-10">
+                        <a href="#" data-target="#buildingContent">จัดการหน่วยงาน</a>
+                    </div>
+                </li>
+                <li class="d-flex align-items-center" id="ManageAppoved">
+                    <div class="col-sm-2 text-center">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div class="col-sm-10">
+                        <a href="#" data-target="#approvedContent">จัดการผู้อนุมัติใบเบิก</a>
+                    </div>
+                </li>
+                <li class="d-flex align-items-center">
+                    <div class="col-sm-2 text-center">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="col-sm-10">
+                        <a href="#" data-target="#reasonContent">จัดการเหตุผลการเบิก</a>
+                    </div>
+                </li>
+                <li class="d-flex align-items-center">
+                    <div class="col-sm-2 text-center">
+                        <i class="fa-solid fa-warehouse"></i>
+                    </div>
+                    <div class="col-sm-10">
+                        <a href="#" data-target="#whSupervisorContent">จัดการผู้ดูแลคลัง</a>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div id="buildingContent" class="content-section">
+                <h5>หน่วยงาน / จัดการหน่วยงาน</h5>
+                @* <p>รายละเอียด</p> *@
+
+                <div id="TbBuildings" class="container-fluid mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <button id="AddBtn" class="btn" style="background-color: #228B22; color: white;" disabled="true">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <div class="d-flex align-items-center">
+                            <label for="searchInput" class="me-2 mb-0" style="min-width: 80px;">ชื่อผู้ใช้งาน :</label>
+                            <input type="text" id="searchInput" class="form-control me-2" placeholder="กรอกคำค้นหา">
+                            <button id="SearchBtn" class="btn" style="background-color: #FF8C00; color: white;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <table id="resultTable" class="table table-bordered" style="font-size: 14px;">
+                        <thead class="table-info text-center">
+                            <tr>
+                                <th data-field="check" data-checkbox="true">เลือก</th>
+                                <th data-field="buildsName" data-sortable="true">หน่วยงาน</th>
+                                <th data-field="rowId" style="display: none;">Row Id</th>
+                                <th data-field="" data-sortable="true">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button id="SaveBtn" class="btn" style="background-color: #FF8C00; color: white; display:none;">
+                            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="approvedContent" class="content-section" style="display: none;">
+                <h5>ผู้อนุมัติใบเบิก / จัดการผู้อนุมัติใบเบิก</h5>
+
+                <div id="TbApproved" class="container-fluid mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <button id="AddApprovedBtn" class="btn" style="background-color: #228B22; color: white;" disabled="true">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <div class="d-flex align-items-center">
+                            <label for="searchApprovedInput" class="me-2 mb-0" style="min-width: 80px;">ค้นหา :</label>
+                            <input type="text" id="searchApprovedInput" class="form-control me-2" placeholder="กรอกคำค้นหา">
+                            <button id="SearchApprovedBtn" class="btn" style="background-color: #FF8C00; color: white;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <table id="approvedTable" class="table table-bordered" style="font-size: 14px;">
+                        <thead class="table-info text-center">
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAllApprov">
+                                </th>
+                                <th>User ID</th>
+                                <th>ชื่อผู้อนุมัติ</th>
+                                <th style="display: none;">Row Id</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ข้อมูลผู้อนุมัติจะถูกแสดงในส่วนนี้ -->
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button id="SaveApprovedBtn" class="btn" style="background-color: #FF8C00; color: white; display:none;">
+                            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reasonContent" class="content-section" style="display: none;">
+                <h5>เหตุผลการเบิก / จัดการเหตุผลการเบิก</h5>
+
+                <div id="TbReasons" class="container-fluid mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <button id="AddReasonBtn" class="btn" style="background-color: #228B22; color: white;" disabled="true">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <div class="d-flex align-items-center">
+                            <label for="searchReasonInput" class="me-2 mb-0" style="min-width: 80px;">ค้นหา :</label>
+                            <input type="text" id="searchReasonInput" class="form-control me-2" placeholder="กรอกคำค้นหา">
+                            <button id="SearchReasonBtn" class="btn" style="background-color: #FF8C00; color: white;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <table id="reasonTable" class="table table-bordered" style="font-size: 14px;">
+                        <thead class="table-info text-center">
+                            <tr>
+                                <th>เลือก</th>
+                                <th>เหตุผลการเบิก</th>
+                                <th>รายละเอียด</th>
+                                <th style="display: none;">Row Id</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button id="SaveReasonBtn" class="btn" style="background-color: #FF8C00; color: white; display:none;">
+                            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="whSupervisorContent" class="content-section" style="display: none;">
+                <h5>ผู้ดูแลคลัง / จัดการผู้ดูแลคลัง</h5>
+
+                <div id="TbWhSupervisor" class="container-fluid mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <button id="AddWhBtn" class="btn" style="background-color: #228B22; color: white;" disabled="true">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                        <div class="d-flex align-items-center">
+                            <label for="searchWhInput" class="me-2 mb-0" style="min-width: 80px;">ค้นหา :</label>
+                            <input type="text" id="searchWhInput" class="form-control me-2" placeholder="กรอกคำค้นหา">
+                            <button id="SearchWhBtn" class="btn" style="background-color: #FF8C00; color: white;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <table id="whSupervisorTable" class="table table-bordered" style="font-size: 14px;">
+                        <thead class="table-info text-center">
+                            <tr>
+                                <th>เลือก</th>
+                                <th>รหัสคลัง</th>
+                                <th>คลัง</th>
+                                <th style="display: none;">Row Id</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button id="SaveWhBtn" class="btn" style="background-color: #FF8C00; color: white; display:none;">
+                            <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<form>
+    <input type="text" class="form-control" id="userid" value="@ViewBag.Username"  hidden/>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        $('#selectAllApprov').on('change', function () {
+            var isChecked = $(this).prop('checked');
+            $('#approvedTable tbody input[type="checkbox"]').prop('checked', isChecked);
+        });
+
+        $('#ManageBuildingLi').addClass('active');
+
+        $('.side li').on('click', function (e) {
+            e.preventDefault();
+
+            $('.side li').removeClass('active');
+
+            $(this).addClass('active');
+
+            $('.content-section').hide();
+
+            var targetContent = $(this).find('a').data('target');
+            $(targetContent).show();
+        });
+
+        $('#SearchBtn').on('click', function () {
+            var searchInput = $('#searchInput').val();
+
+            if (searchInput.trim() === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณากรอกคำค้นหา'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SearchBuildings',
+                type: 'GET',
+                data: { searchTerm: searchInput },
+                dataType: 'json',
+                success: function (response) {
+
+                    if (response.success) {
+                        $('#resultTable tbody').empty();
+
+                        var resultData = response.resultData;
+
+                        if (resultData.length > 0) {
+                            resultData.forEach(function (building) {
+                                $('#resultTable tbody').append(`
+                                        <tr>
+                                            <td class="center-align">
+                                                <input type="checkbox">
+                                            </td>
+                                            <td>${building.depName}</td>
+                                            <td data-rowid="${building.rowId}" style="display: none;">${building.rowId}</td>
+                                            <td class="center-align">
+                                                <button class="btn btn-danger btn-sm delete-row">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `);
+                            });
+                        } 
+                        // else {
+                        //     Swal.fire({
+                        //         icon: 'info',
+                        //         title: 'ไม่พบข้อมูล',
+                        //         text: 'ไม่พบข้อมูลที่ค้นหา'
+                        //     });
+                        // }
+
+                        $('#AddBtn').prop('disabled', false);
+                        $('#SaveBtn').hide();
+
+                        hideLoadingOverlay();
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่พบข้อมูลผู้ใช้',
+                            text: response.message
+                        });
+                        hideLoadingOverlay();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการค้นหาข้อมูล'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#SearchApprovedBtn').on('click', function () {
+            var searchInput = $('#searchApprovedInput').val();
+
+            if (searchInput.trim() === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณากรอกคำค้นหา'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SearchApproved',  // URL สำหรับค้นหาข้อมูลผู้อนุมัติ
+                type: 'GET',
+                data: { searchTerm: searchInput },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        $('#approvedTable tbody').empty(); // ล้างข้อมูลเก่าในตาราง
+
+                        var resultData = response.resultData;
+
+                        if (resultData.length > 0) {
+                            resultData.forEach(function (approved) {
+                                $('#approvedTable tbody').append(`
+                                        <tr>
+                                            <td class="center-align">
+                                                <input type="checkbox">
+                                            </td>
+                                            <td>${approved.userName}</td>
+                                            <td>${approved.name}</td>
+                                            <td data-rowid="${approved.rowId}" style="display: none;">${approved.rowId}</td>
+                                            <td class="center-align">
+                                                <button class="btn btn-danger btn-sm delete-row">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `);
+                            });
+                        }
+                        // else {
+                        //     Swal.fire({
+                        //         icon: 'info',
+                        //         title: 'ไม่พบข้อมูล',
+                        //         text: 'ไม่พบข้อมูลผู้อนุมัติใบเบิกที่ค้นหา'
+                        //     });
+                        // }
+                        $('#AddApprovedBtn').prop('disabled', false);
+                        $('#SaveApprovedBtn').hide();
+                        hideLoadingOverlay();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่พบข้อมูลผู้ใช้',
+                            text: response.message
+                        });
+                        hideLoadingOverlay();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการค้นหาข้อมูลผู้อนุมัติใบเบิก'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#SearchReasonBtn').on('click', function () {
+            var searchInput = $('#searchReasonInput').val();
+
+            if (searchInput.trim() === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณากรอกคำค้นหา'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SearchReasons',
+                type: 'GET',
+                data: { searchTerm: searchInput },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                         $('#reasonTable tbody').empty(); // ล้างข้อมูลเก่าในตาราง
+
+                        if (response.getData.length > 0) {
+                            response.getData.forEach(function (item) {
+                                $('#reasonTable tbody').append(`
+                                        <tr>
+                                            <td class="center-align">
+                                                <input type="checkbox">
+                                            </td>
+                                            <td>${item.dataCode}</td>
+                                            <td>${item.description}</td>
+                                            <td data-rowid="${item.rowId}" style="display: none;">${item.rowId}</td>
+                                            <td class="center-align">
+                                                <button class="btn btn-danger btn-sm delete-row">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `);
+                            });
+                        } 
+                        // else {
+                        //     Swal.fire({
+                        //         icon: 'info',
+                        //         title: 'ไม่พบข้อมูล',
+                        //         text: 'ไม่พบข้อมูลที่ค้นหา'
+                        //     });
+                        // }
+
+                        $('#AddReasonBtn').prop('disabled', false);
+                        $('#SaveReasonBtn').hide();
+                        hideLoadingOverlay();
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่พบข้อมูลผู้ใช้',
+                            text: response.message
+                        });
+                        hideLoadingOverlay();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการค้นหาข้อมูล'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#SearchWhBtn').on('click', function () {
+            var searchInput = $('#searchWhInput').val();
+
+            if (searchInput.trim() === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณากรอกคำค้นหา'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SearchWh',
+                type: 'GET',
+                data: { searchTerm: searchInput },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        $('#whSupervisorTable tbody').empty(); // ล้างข้อมูลเก่าในตาราง
+
+                        if (response.getData.length > 0) {
+                            response.getData.forEach(function (item) {
+                                $('#whSupervisorTable tbody').append(`
+                                            <tr>
+                                                <td class="center-align">
+                                                    <input type="checkbox">
+                                                </td>
+                                                <td>${item.warehouseCode}</td>
+                                                <td>${item.description}</td>
+                                                <td data-rowid="${item.rowId}" style="display: none;">${item.rowId}</td>
+                                                <td class="center-align">
+                                                    <button class="btn btn-danger btn-sm delete-row">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `);
+                            });
+                        }
+
+                        $('#SaveWh').hide();
+                        $('#AddWhBtn').prop('disabled', false);
+                        hideLoadingOverlay();
+                    } else { 
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่พบข้อมูลผู้ใช้',
+                            text: response.message
+                        });
+                        hideLoadingOverlay();
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการค้นหาข้อมูล'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#AddBtn').on('click', function () {
+            // showLoadingOverlay();
+            $.ajax({
+                url: '/User/GetBuildings',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+
+                    var options = '<option value="" disabled selected>เลือกหน่วยงาน</option>';
+                    response.getData.forEach(function (building) {
+                        options += `<option value="${building.depName}">${building.depName}</option>`;
+                    });
+
+                    $('#resultTable tbody').append(`
+                        <tr>
+                            <td class="center-align">
+                                <input type="checkbox">
+                            </td>
+                            <td>
+                                <select class="form-select">
+                                    ${options}
+                                </select>
+                            </td>
+                            <td class="center-align">
+                                <button class="btn btn-danger btn-sm delete-row">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+
+                    $('#SaveBtn').show();
+                    // hideLoadingOverlay();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการดึงข้อมูลหน่วยงาน'
+                    });
+                    // hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#AddApprovedBtn').on('click', function () {
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/GetApprovers',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+
+                    var options = '<option value="" disabled selected>เลือกผู้อนุมัติ</option>';
+
+                    response.approverList.forEach(function (approver) {
+                        options += `<option value="${approver.userId}" data-username="${approver.name}">${approver.userName}</option>`;
+                    });
+
+                    $('#approvedTable tbody').append(`
+                            <tr>
+                                <td class="center-align">
+                                    <input type="checkbox">
+                                </td>
+                                <td>
+                                    <select class="form-text approver-select selectpicker w-100" data-live-search="true">
+                                        ${options}
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control position-input" placeholder="ชื่อผู้อนุมัติ" readonly>
+                                </td>
+                                <td data-rowid="0" style="display: none;">0</td>
+                                <td class="center-align">
+                                    <button class="btn btn-danger btn-sm delete-row">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+
+                    $('.selectpicker').selectpicker('destroy').selectpicker();
+                    $('#SaveApprovedBtn').show();
+                    hideLoadingOverlay();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการดึงข้อมูลผู้อนุมัติ'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#AddReasonBtn').on('click', function () {
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/GetReasons',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+
+                    var options = '<option value="" disabled selected>เลือกเหตุผล</option>';
+
+                    response.reasonList.forEach(function (reason) {
+                        options += `<option value="${reason.reasonCode}" data-username="${reason.description}">${reason.reasonCode} : ${reason.description}</option>`;
+                    });
+
+                    $('#reasonTable tbody').append(`
+                                <tr>
+                                    <td class="center-align">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td>
+                                        <select class="form-select reason-select">
+                                            ${options}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control description-input" placeholder="รายละเอียด" readonly>
+                                    </td>
+                                    <td data-rowid="0" style="display: none;">0</td>
+                                    <td class="center-align">
+                                        <button class="btn btn-danger btn-sm delete-row">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `);
+
+                    $('#SaveReasonBtn').show();
+                    hideLoadingOverlay();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการดึงข้อมูลผู้อนุมัติ'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#AddWhBtn').on('click', function () {
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/GetWh',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+
+                    var optionsWh = '<option value="" disabled selected>เลือกคลัง</option>';
+                    var optionsDesc = '<option value="" disabled selected>เลือกคลัง</option>';
+
+                    response.whList.forEach(function (wh) {
+                        optionsWh += `<option value="${wh.warehouseCode}" data-username="${wh.description}">${wh.warehouseCode}</option>`;
+                        optionsDesc += `<option value="${wh.description}" data-username="${wh.warehouseCode}">${wh.description}</option>`;
+                    });
+
+                    $('#whSupervisorTable tbody').append(`
+                                    <tr>
+                                        <td class="center-align">
+                                            <input type="checkbox">
+                                        </td>
+                                        <td>
+                                            <select class="form-select wh-select">
+                                                 ${optionsWh}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-select desc-select">
+                                                 ${optionsDesc}
+                                            </select>
+                                        </td>
+                                        <td data-rowid="0" style="display: none;">0</td>
+                                        <td class="center-align">
+                                            <button class="btn btn-danger btn-sm delete-row">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `);
+
+                    $('#SaveWhBtn').show();
+                    hideLoadingOverlay();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการดึงข้อมูลผู้อนุมัติ'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+        });
+
+        $('#approvedTable').on('change', '.approver-select', function () {
+
+            var selectedOption = $(this).find('option:selected');
+            var username = selectedOption.data('username');
+
+            $(this).closest('tr').find('.position-input').val(username).prop('readonly', true);
+        });
+
+        $('#reasonTable').on('change', '.reason-select', function () {
+
+            var selectedOption = $(this).find('option:selected');
+            var username = selectedOption.data('username');
+
+            $(this).closest('tr').find('.description-input').val(username).prop('readonly', true);
+        });
+
+        $('#whSupervisorTable').on('change', '.wh-select', function () {
+
+            var selectedOption = $(this).find('option:selected');
+            var username = selectedOption.data('username');
+
+            $(this).closest('tr').find('.desc-select').val(username).prop('readonly', true);
+        });
+
+        $('#whSupervisorTable').on('change', '.desc-select', function () {
+
+            var selectedOption = $(this).find('option:selected');
+            var username = selectedOption.data('username');
+
+            $(this).closest('tr').find('.wh-select').val(username).prop('readonly', true);
+        });
+
+        $('#resultTable').on('click', '.delete-row', function () {
+            // ตรวจสอบว่าแถวที่ต้องการลบมี checkbox ที่ถูกทำเครื่องหมายไว้หรือไม่
+            var row = $(this).closest('tr');
+            var isChecked = row.find('input[type="checkbox"]').is(':checked');
+
+            if (!isChecked) {
+                Swal.fire({
+                    title: 'คำเตือน',
+                    text: "กรุณาเลือกแถวที่ต้องการลบก่อน!",
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง',
+                });
+                return;
+            }
+
+            var rowId = row.find('td[data-rowid]').data('rowid');
+
+            // แสดง SweetAlert เพื่อยืนยันการลบ
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "ต้องการลบข้อมูลนี้!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/User/DeleteRow',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ rowId: rowId }),
+                        success: function (response) {
+                            if (response.success) {
+                                // ลบแถวที่ถูกเลือก
+                                row.remove();
+                                Swal.fire(
+                                    'ลบสำเร็จ!',
+                                    'แถวที่เลือกถูกลบออกแล้ว.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'ลบล้มเหลว!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function () {
+                            Swal.fire(
+                                'เกิดข้อผิดพลาด!',
+                                'ไม่สามารถลบแถวได้, กรุณาลองอีกครั้ง.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#approvedTable').on('click', '.delete-row', function () {
+            // ตรวจสอบว่าแถวที่ต้องการลบมี checkbox ที่ถูกทำเครื่องหมายไว้หรือไม่
+            var row = $(this).closest('tr');
+            var isChecked = row.find('input[type="checkbox"]').is(':checked');
+
+            if (!isChecked) {
+                Swal.fire({
+                    title: 'คำเตือน',
+                    text: "กรุณาเลือกแถวที่ต้องการลบก่อน!",
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง',
+                });
+                return;
+            }
+
+            var rowId = row.find('td[data-rowid]').data('rowid');
+
+            // แสดง SweetAlert เพื่อยืนยันการลบ
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "ต้องการลบข้อมูลนี้!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/User/DeleteApprovedRow',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ rowId: rowId }),
+                        success: function (response) {
+                            if (response.success) {
+                                // ลบแถวที่ถูกเลือก
+                                row.remove();
+                                Swal.fire(
+                                    'ลบสำเร็จ!',
+                                    'แถวที่เลือกถูกลบออกแล้ว.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'ลบล้มเหลว!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function () {
+                            Swal.fire(
+                                'เกิดข้อผิดพลาด!',
+                                'ไม่สามารถลบแถวได้, กรุณาลองอีกครั้ง.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#reasonTable').on('click', '.delete-row', function () {
+            // ตรวจสอบว่าแถวที่ต้องการลบมี checkbox ที่ถูกทำเครื่องหมายไว้หรือไม่
+            var row = $(this).closest('tr');
+            var isChecked = row.find('input[type="checkbox"]').is(':checked');
+
+            if (!isChecked) {
+                Swal.fire({
+                    title: 'คำเตือน',
+                    text: "กรุณาเลือกแถวที่ต้องการลบก่อน!",
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง',
+                });
+                return;
+            }
+
+            var rowId = row.find('td[data-rowid]').data('rowid');
+
+            // แสดง SweetAlert เพื่อยืนยันการลบ
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "ต้องการลบข้อมูลนี้!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/User/DeleteReasonRow',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ rowId: rowId }),
+                        success: function (response) {
+                            if (response.success) {
+                                // ลบแถวที่ถูกเลือก
+                                row.remove();
+                                Swal.fire(
+                                    'ลบสำเร็จ!',
+                                    'แถวที่เลือกถูกลบออกแล้ว.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'ลบล้มเหลว!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function () {
+                            Swal.fire(
+                                'เกิดข้อผิดพลาด!',
+                                'ไม่สามารถลบแถวได้, กรุณาลองอีกครั้ง.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#whSupervisorTable').on('click', '.delete-row', function () {
+            // ตรวจสอบว่าแถวที่ต้องการลบมี checkbox ที่ถูกทำเครื่องหมายไว้หรือไม่
+            var row = $(this).closest('tr');
+            var isChecked = row.find('input[type="checkbox"]').is(':checked');
+
+            if (!isChecked) {
+                Swal.fire({
+                    title: 'คำเตือน',
+                    text: "กรุณาเลือกแถวที่ต้องการลบก่อน!",
+                    icon: 'warning',
+                    confirmButtonText: 'ตกลง',
+                });
+                return;
+            }
+
+            var rowId = row.find('td[data-rowid]').data('rowid');
+
+            // แสดง SweetAlert เพื่อยืนยันการลบ
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "ต้องการลบข้อมูลนี้!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/User/DeleteWhRow',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ rowId: rowId }),
+                        success: function (response) {
+                            if (response.success) {
+                                // ลบแถวที่ถูกเลือก
+                                row.remove();
+                                Swal.fire(
+                                    'ลบสำเร็จ!',
+                                    'แถวที่เลือกถูกลบออกแล้ว.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'ลบล้มเหลว!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function () {
+                            Swal.fire(
+                                'เกิดข้อผิดพลาด!',
+                                'ไม่สามารถลบแถวได้, กรุณาลองอีกครั้ง.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#SaveBtn').on('click', function () {
+
+            var dataToSave = [];
+            var searchInput = $('#searchInput').val();
+            var username = $('#userid').val();
+
+            $('#resultTable tbody tr').each(function () {
+                var checkbox = $(this).find('input[type="checkbox"]').is(':checked');
+                var selectValue = $(this).find('select').val();
+
+                if (checkbox) {
+                    dataToSave.push({
+                        selectedBuilding: selectValue,
+                        username: searchInput,
+                        userId: username
+                    });
+                }
+            });
+
+            if (dataToSave.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณาเลือกแถวที่ต้องการบันทึก'
+                });
+                return;
+            }
+
+            console.log("Data to Save: ", dataToSave);
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SaveBuildings',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSave),
+                success: function (response) {
+                    if (response.success) {
+
+                        //hideLoadingOverlay();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ',
+                            text: 'บันทึกข้อมูลเรียบร้อยแล้ว'
+                        }).then(function () {
+                            // เคลียร์ข้อมูลในตาราง ยกเว้นช่อง search
+                            $('#resultTable tbody').empty();
+                            $('#SaveBtn').hide();
+                            $('#AddBtn').prop('disabled', true);
+
+                            $('#SearchBtn').click();
+                        });
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + response.message
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
+                    });
+                },
+                complete: function () {
+                    hideLoadingOverlay();
+                }
+            });
+
+        });
+
+        $('#SaveApprovedBtn').on('click', function () {
+            var dataToSave = [];
+            var searchInput = $('#searchApprovedInput').val();
+            var username = $('#userid').val();
+
+            // วนลูปผ่านแต่ละแถวในตาราง
+            $('#approvedTable tbody tr').each(function () {
+                var checkbox = $(this).find('input[type="checkbox"]').is(':checked');
+                var approverName = $(this).find('select.approver-select option:selected').text();
+                var position = $(this).find('input.position-input').val();
+
+                if (checkbox && approverName) {
+                    dataToSave.push({
+                        approverId: approverName,
+                        position: position,
+                        approverName: searchInput,
+                        userId: username
+                    });
+                }
+            });
+
+            if (dataToSave.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณาเลือกแถวที่ต้องการบันทึก'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SaveApprovers',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSave),
+                success: function (response) {
+                    hideLoadingOverlay();
+
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ',
+                            text: 'บันทึกข้อมูลเรียบร้อยแล้ว'
+                        }).then(function () {
+                            // เคลียร์ข้อมูลในตาราง ยกเว้นช่อง search
+                            $('#approvedTable tbody').empty();
+                            $('#SaveApprovedBtn').hide();
+                            $('#AddApprovedBtn').prop('disabled', true);
+
+                            $('#SearchApprovedBtn').click();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + response.message
+                        });
+                    }
+                },
+                error: function () {
+                    hideLoadingOverlay();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
+                    });
+                }
+            });
+        });
+
+        $('#SaveReasonBtn').on('click', function () {
+            var dataToSave = [];
+            var searchInput = $('#searchReasonInput').val();
+            var username = $('#userid').val();
+
+            // วนลูปผ่านแต่ละแถวในตาราง
+            $('#reasonTable tbody tr').each(function () {
+                var checkbox = $(this).find('input[type="checkbox"]').is(':checked');
+                var reasonCodeFull = $(this).find('select.reason-select option:selected').text();
+                var reasonCode = reasonCodeFull.split(':')[0].trim(); // ใช้แค่รหัสส่วนแรก
+                var desc = $(this).find('input.description-input').text();
+
+                if (checkbox) {
+                    dataToSave.push({
+                        reasonCode: reasonCode,
+                        reasonDesc: desc,
+                        reasonName: searchInput,
+                        userId: username
+                    });
+                }
+            });
+
+            if (dataToSave.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณาเลือกแถวที่ต้องการบันทึก'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SaveReasons',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSave),
+                success: function (response) {
+                    hideLoadingOverlay();
+
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ',
+                            text: 'บันทึกข้อมูลเรียบร้อยแล้ว'
+                        }).then(function () {
+                            // เคลียร์ข้อมูลในตาราง ยกเว้นช่อง search
+                            $('#reasonTable tbody').empty();
+                            $('#SaveReasonBtn').hide();
+                            $('#AddReasonBtn').prop('disabled', true);
+
+                            $('#SearchReasonBtn').click();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + response.message
+                        });
+                    }
+                },
+                error: function () {
+                    hideLoadingOverlay();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
+                    });
+                }
+            });
+        });
+
+        $('#SaveWhBtn').on('click', function () {
+            var dataToSave = [];
+            var searchInput = $('#searchWhInput').val();
+            var username = $('#userid').val();
+
+            // วนลูปผ่านแต่ละแถวในตาราง
+            $('#whSupervisorTable tbody tr').each(function () {
+                var checkbox = $(this).find('input[type="checkbox"]').is(':checked');
+                var whCode = $(this).find('select.wh-select option:selected').text();
+                var whDesc = $(this).find('select.desc-select option:selected').text();
+
+                if (checkbox) {
+                    dataToSave.push({
+                        whCode: whCode,
+                        whDesc: whDesc,
+                        whName: searchInput,
+                        userId: username
+                    });
+                }
+            });
+
+            if (dataToSave.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: 'กรุณาเลือกแถวที่ต้องการบันทึก'
+                });
+                return;
+            }
+
+            showLoadingOverlay();
+
+            $.ajax({
+                url: '/User/SaveWh',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSave),
+                success: function (response) {
+                    hideLoadingOverlay();
+
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'สำเร็จ',
+                            text: 'บันทึกข้อมูลเรียบร้อยแล้ว'
+                        }).then(function () {
+                            // เคลียร์ข้อมูลในตาราง ยกเว้นช่อง search
+                            $('#whSupervisorTable tbody').empty();
+                            $('#SaveWhBtn').hide();
+                            $('#AddWhBtn').prop('disabled', true);
+
+                            $('#SearchWhBtn').click();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + response.message
+                        });
+                    }
+                },
+                error: function () {
+                    hideLoadingOverlay();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'
+                    });
+                }
+            });
+        });
+
+        function showLoadingOverlay() {
+            $.LoadingOverlay("show", {
+                image: "",
+                fontawesome: "fa-solid fa-spinner fa-spin",
+            });
+        }
+
+        function hideLoadingOverlay() {
+            $.LoadingOverlay("hide");
+        }
+
+    });
+
+</script>

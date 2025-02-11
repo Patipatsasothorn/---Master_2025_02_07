@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>\\192.168.10.4\BPI_WarehouseManage.Web-Uat</_PublishTargetUrl>
+    <History>True|2024-12-27T02:00:59.6228247Z;True|2024-12-23T09:42:58.2076506+07:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

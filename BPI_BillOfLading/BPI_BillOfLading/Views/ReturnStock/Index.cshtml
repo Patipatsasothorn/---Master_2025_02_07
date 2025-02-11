@@ -1,0 +1,180 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var Company = ViewBag.Company as string;
+
+}
+<style>
+    #dataTable th, #dataTable td {
+        text-align: center; /* จัดข้อความให้อยู่กลางในแนวนอน */
+        vertical-align: middle; /* จัดข้อความให้อยู่กลางในแนวตั้ง */
+    }
+</style>
+<div class="container-fluid mt-4">
+    <!-- Card 1 -->
+    <h5 class="card-title">ข้อมูลทั่วไป</h5>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <!-- Row 1: วันที่ - ถึงวันที่ -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="startDate" class="form-label">วันที่</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="col-md-6">
+                    <label for="endDate" class="form-label">ถึงวันที่</label>
+                    <input type="date" class="form-control" id="endDate">
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+                <!-- Search Button with Icon -->
+                <button id="searchButton" type="button" class="btn btn-primary">
+                    <i class="fas fa-search"></i> ค้นหา
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Spacer -->
+    <div class="my-4"></div>
+
+    <!-- Card 2 -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">ตารางข้อมูล</h5>
+
+            <!-- Table -->
+            <table id="dataTable" class="table table-bordered table-primary">
+                <thead>
+                    <tr>
+                        <th>วันที่จ่าย</th>
+                        <th>เลขที่ใบเบิก</th>
+                        <th>แผนก/ฝ่าย</th>
+                        <th>เหตุผลที่เบิก</th>
+
+                        <th>ผู้เบิก</th>
+
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered table-Success">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // Function to set the current date in YYYY-MM-DD format
+    function setCurrentDate() {
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // Format the date to YYYY-MM-DD
+        document.getElementById('startDate').value = formattedDate;
+        document.getElementById('endDate').value = formattedDate;
+    }
+
+    // Call the function when the page loads
+    window.onload = setCurrentDate;
+</script>
+
+<script>
+    function showLoadingOverlay() {
+        $.LoadingOverlay("show", {
+            image: "",
+            fontawesome: "fa-solid fa-truck-front fa-bounce",
+        });
+    }
+
+    function hideLoadingOverlay() {
+        $.LoadingOverlay("hide");
+    }
+    $(document).ready(function () {
+        $('#searchButton').click(function () {
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            var Company = '@ViewBag.Company';
+
+            showLoadingOverlay();
+            $.ajax({
+                url: '/ReturnStock/GetFilteredData', // URL ของ Action ที่รับข้อมูล
+                method: 'GET',
+                data: {
+                    Startdate: startDate,
+                    Stopdate: endDate,
+                    Company: Company
+                },
+                success: function (response) {
+                    var tableBody = $('#dataTable tbody');
+                    tableBody.empty(); // ล้างข้อมูลเก่าในตาราง
+                    if (!response || response.length === 0) {
+                        // ถ้าข้อมูลเป็น null หรือ array ว่าง
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'ไม่พบรายการใด',
+                            text: 'ไม่มีข้อมูลที่ตรงกับเงื่อนไขที่ค้นหา'
+                        });
+                        hideLoadingOverlay();
+                        return;
+                    }
+                    $.each(response, function (index, item) {
+                        var row = $('<tr>');
+                        var docDate = new Date(item.docDate).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        }); // ผลลัพธ์: "24/09/2567"
+                        row.append($('<td>').text(docDate)); // เปลี่ยนเป็นชื่อฟิลด์ที่ตรงกับข้อมูลของคุณ
+                        row.append($('<td>').text(item.docId));
+                        row.append($('<td>').text(item.depName));
+                        row.append($('<td>').text(item.description));
+
+                        row.append($('<td>').text(item.userName));
+                        tableBody.append(row);
+                    });
+                    hideLoadingOverlay();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                    console.error('XHR Error:', xhr.responseText); // แสดงรายละเอียดเพิ่มเติมจาก xhr
+                    alert('ไม่สามารถดึงข้อมูลได้: ' + xhr.responseText); // แสดงรายละเอียดของ error
+                    hideLoadingOverlay();
+                }
+            });
+
+
+            $('#dataTable').on('click', 'tr', function () {
+                var dateText = $(this).find('td').eq(0).text();  // ดึงค่า column ที่ 1 (Date)
+
+                // แปลงวันที่จาก DD/MM/YYYY เป็น YYYY-MM-DD
+                var dateParts = dateText.split('/');  // แยกวันที่ออกเป็นส่วน ๆ
+                var day = dateParts[0];
+                var month = dateParts[1];
+                var year = dateParts[2];
+
+                // ถ้าปีเป็นพุทธศักราช (มากกว่า 2500) ให้แปลงเป็นค.ศ.
+                if (parseInt(year) > 2400) {
+                    year = parseInt(year) - 543;
+                }
+
+                // จัดรูปแบบเป็น YYYY-MM-DD สำหรับส่งผ่าน query string
+                var formattedDate = day + '/' + month + '/' + year;
+                var username = '@ViewBag.Username';
+                var Company = '@ViewBag.Company';
+
+                // ทดสอบการแสดงวันที่แปลงแล้ว
+                console.log(formattedDate);
+
+                var docId = $(this).find('td').eq(1).text();  // ดึงค่า column ที่ 2 (docId)
+                var Status = $(this).find('td').eq(4).text();  // ดึงค่า column ที่ 2 (docId)
+
+                if (docId) {
+                    // Redirect ไปยังหน้า Privacy และส่ง docId กับ date ผ่าน query string
+                    window.open('/ReturnStock/Privacy?docId=' + encodeURIComponent(docId) + '&date=' + encodeURIComponent(formattedDate) + '&username=' + encodeURIComponent(username) + '&Company=' + encodeURIComponent(Company));
+                }
+            });
+        });
+
+    });
+
+</script>

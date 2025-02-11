@@ -1,0 +1,653 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var Company = ViewBag.Company as string;
+
+    ViewData["Title"] = "Privacy Policy";
+    DateTime? docDate = ViewData["date"] as DateTime?;
+}
+
+<style>
+    #qrcode-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+        #qrcode-popup > div {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+    #close-popup {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+    /* Style for the close button */
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent; /* No background */
+        border: none; /* No border */
+        cursor: pointer; /* Pointer on hover */
+        font-size: 24px; /* Increase icon size */
+        color: #ff5c5c; /* Set color to red */
+        transition: color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    }
+
+        /* Hover effect */
+        .close-btn:hover {
+            color: #ff1c1c; /* Darker red on hover */
+            transform: scale(1.2); /* Slightly increase size on hover */
+        }
+
+        /* Focus effect for keyboard navigation */
+        .close-btn:focus {
+            outline: none; /* Remove default outline */
+            box-shadow: 0 0 0 3px rgba(255, 92, 92, 0.6); /* Custom focus outline */
+        }
+
+    .custom-btn {
+        background-color: #6c757d; /* สีเทา */
+        color: white;
+        border: none;
+        width: 100px; /* กำหนดขนาดปุ่มตามต้องการ */
+        height: 100px; /* ขยายความสูงของปุ่ม */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+        .custom-btn i {
+            font-size: 48px; /* ขยายขนาดไอคอน */
+        }
+
+        .custom-btn:hover {
+            background-color: #5a6268; /* สีเทาเข้มเมื่อ hover */
+        }
+
+</style>
+
+<div class="container-fluid mt-4">
+    <!-- Card 1 -->
+    <div class="card">
+
+        <div class="card-body">
+            <!-- Buttons -->
+
+            <button id="approveBtn" type="button" class="btn btn-success me-2">
+                <i class="fa-solid fa-check"></i> อนุมัติ
+            </button>
+            <button id="editBtn" type="button" class="btn btn-warning me-2">
+                <i class="fa-solid fa-edit"></i> ส่งแก้ใข
+            </button>
+            <button id="rejectBtn" type="button" class="btn btn-danger me-2">
+                <i class="fa-solid fa-times"></i> ไม่อนุมัติ
+            </button>
+            <div id="status" data-status="@ViewData["Status"]"></div>
+
+            <div class="my-4">
+
+                <!-- Form Elements -->
+                <label for="docNumber" class="me-5">เลขที่เอกสาร:</label>
+                <div style="display: inline-flex; align-items: center;">
+                    <input type="text" id="docNumber" class="form-control" style="width: 300px; margin-right: -1px;" value="@ViewData["docId"]" />
+                    <button id="qrcode" type="button" class="btn btn-secondary me-5">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </button>
+                </div>
+
+
+
+                <button id="searchButton" type="button" class="btn btn-info me-5">
+                    <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
+                </button>
+
+                <label for="docDate" class="me-5">วันที่:</label>
+                <input type="text" id="docDate" class="form-control d-inline-block me-2" style="width: 200px; " value="@ViewData["date"]" disabled />
+
+
+                <label for="docStatus" class="me-5">สถานะ:</label>
+                <input type="text" id="docStatus" class="form-control d-inline-block" style="width: 300px;" value="@ViewData["Status"] (@ViewData["date"]) " disabled />
+            </div>
+            <div class="my-4">
+                <!-- Form Elements -->
+                <label for="docNumber" style="margin-right: 89px;">เหตุผล:</label>
+                <input type="text" id="BE" class="form-control d-inline-block " style="width: 300px; margin-right: 110px;" disabled />
+
+
+
+                <label for="docDate" class="me-5">หน่วยงาน:</label>
+                <input type="text" id="dep" class="form-control d-inline-block me-4" style="width: 200px;" disabled />
+
+                <label for="docStatus" class="me-5">Plant:  </label>
+                <input type="text" id="Plant" class="form-control d-inline-block me-4" style="width: 300px;" disabled />
+
+                <label for="docDate" class="me-2">วันที่:</label>
+                <input type="text" id="Datedoc" class="form-control d-inline-block me-4" style="width: 200px;" disabled />
+            </div>
+            <div class="my-4">
+                <label for="BECU" class="me-2">หมายเหตุ</label>
+                <input type="text" id="BEcuse" class="form-control d-inline-block" style="width: 100%;" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Spacer -->
+    <div class="my-4"></div>
+
+    <!-- Card 2 -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">ตารางข้อมูล</h5>
+
+            <!-- Table -->
+            <table id="dataTable" class="table table-bordered table-primary">
+                <thead>
+                    <tr>
+                        <th>Part num</th>
+                        <th>Description</th>
+                        <th>จำนวน</th>
+                        <th>หน่วยนับ</th>
+                        <th style="display:none">คลัง</th>
+                        <th style="display:none">BIN</th>
+
+                    </tr>
+                </thead>
+                <tbody class="table table-bordered table-Success">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- QR Code Scanner Popup -->
+    <div id="qrcode-popup" style="display: none;">
+        <div style="position: relative; width: 100%; max-width: 600px; margin: auto; padding: 20px; background-color: white; border: 1px solid #ddd; border-radius: 8px;">
+            <button id="close-popup" class="close-btn">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <div id="qrcode-reader" style="width: 90%; height: 400px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        // Get the status from the input field
+        var statusField = document.getElementById('docStatus');
+        var statusText = statusField.value.trim(); // Get value and trim whitespace
+
+        // Extract the status part (before the date) if needed
+        var status = statusText.split(' ')[0]; // Assuming the format is "Status (date)"
+
+        // ตรวจสอบว่ามีข้อมูลใน docNumber หรือไม่
+        var docNumberField = document.getElementById('docNumber');
+        var docNumberValue = docNumberField.value;
+
+        // ถ้ามีข้อมูล ให้ focus และเลื่อน cursor ไปข้างหลังสุด
+        if (docNumberValue.trim() !== "") {
+            docNumberField.focus();
+            // ทำให้ cursor อยู่หลังข้อมูล
+            docNumberField.setSelectionRange(docNumberValue.length, docNumberValue.length);
+
+        } else {
+            // ถ้าไม่มีข้อมูล ก็แค่ focus ที่ฟิลด์ docNumber
+            docNumberField.focus();
+        }
+
+        // ตรวจสอบสถานะ docStatus
+        if (status !== 'รออนุมัติ') {
+            // Hide the buttons if status is not "รออนุมัติ"
+            document.getElementById('approveBtn').style.display = 'none';
+            document.getElementById('editBtn').style.display = 'none';
+            document.getElementById('rejectBtn').style.display = 'none';
+        }
+    };
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        let qrCodeScanner;
+
+        // Show QR Code Scanner Popup
+        $('#qrcode').on('click', function () {
+            $('#qrcode-popup').show();
+            startQRCodeScanner();
+        });
+
+        // Close QR Code Scanner Popup
+        $('#close-popup').on('click', function () {
+            stopQRCodeScanner();
+            $('#qrcode-popup').hide(); // ย้ายการซ่อน popup มาที่นี่เพื่อปิดหลังจากกล้องหยุดทำงาน
+        });
+
+        // Start QR Code Scanner
+        function startQRCodeScanner() {
+            if (!qrCodeScanner) {
+                qrCodeScanner = new Html5Qrcode("qrcode-reader"); // สร้าง instance ครั้งเดียว
+            }
+
+            qrCodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                function (decodedText) {
+                    $('#docNumber').val(decodedText);
+                    stopQRCodeScanner(); // หยุดกล้องเมื่อสแกนสำเร็จ
+                    $('#qrcode-popup').hide();
+                },
+                function (errorMessage) {
+                    console.error('Error scanning QR Code:', errorMessage);
+                }
+            ).catch(function (error) {
+                console.error('Error starting QR Code Scanner:', error);
+            });
+        }
+
+        // Stop QR Code Scanner
+        function stopQRCodeScanner() {
+            if (qrCodeScanner) { // ตรวจสอบว่ามี instance ที่สร้างไว้หรือไม่
+                qrCodeScanner.stop().then(function () {
+                    console.log('QR Code scanner stopped.');
+                }).catch(function (error) {
+                    console.error('Error stopping QR Code scanner:', error);
+                });
+            }
+        }
+
+    });
+</script>
+<script>
+    function showLoadingOverlay() {
+        $.LoadingOverlay("show", {
+            image: "",
+            fontawesome: "fa-solid fa-truck-front fa-bounce",
+        });
+    }
+
+    function hideLoadingOverlay() {
+        $.LoadingOverlay("hide");
+    }
+    $(document).ready(function () {
+        $('#searchButton').click(function () {
+            showLoadingOverlay();
+            // เคลียร์ข้อมูลทั้งหมดก่อนทำการค้นหาใหม่
+            $('#BE').val('');
+            $('#dep').val('');
+            $('#Plant').val('');
+            $('#Datedoc').val('');
+            $('#BEcuse').val('');
+            $('#docDate').val('');
+            $('#docStatus').val('');
+
+            var docNumber = $('#docNumber').val(); // ตรวจสอบ docNumber ให้แน่ใจว่ามีค่า
+            const Company = sessionStorage.getItem('Company');
+            $.ajax({
+                url: '/Approve/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                method: 'GET',
+                data: {
+                    docNumber: docNumber,
+                    Company: Company
+                },
+                success: function (response) {
+                    // เก็บข้อมูลที่ได้จากการค้นหาไว้ในตัวแปร BE
+                    $('#BE').val(response[0].description);
+                    $('#dep').val(response[0].depName);
+                    $('#Plant').val(response[0].plant);
+                    $('#Datedoc').val(response[0].reqDate.split('T')[0]);
+
+                    // แปลง docDate เป็นรูปแบบวันที่ที่อ่านง่าย
+                    var date = new Date(response[0].docDate);
+                    var formattedDate = date.toLocaleDateString(); // แปลงวันที่เป็นรูปแบบที่อ่านง่าย
+
+                    $('#BEcuse').val(response[0].remark);
+                    $('#docDate').val(formattedDate);
+                    var statusText = "";
+                    if (response[0].status === "S") {
+                        statusText = "บันทึก";
+                    } else if (response[0].status === "W") {
+                        statusText = "รออนุมัติ";
+                    } else if (response[0].status === "A") {
+                        statusText = "อนุมัติแล้ว";
+                    } else if (response[0].status === "C") {
+                        statusText = "ยกเลิกแล้ว";
+                    } else if (response[0].status === "E") {
+                        statusText = "แก้ไข";
+                    } else if (response[0].statuss === "P") {
+                        statusText = "มีการจ่ายของแล้ว บางส่วนหรือทั้งหมด";
+                    } else if (response[0].status === "U") {
+                        statusText = "ไม่อนุมัติ";
+                    } else {
+                        statusText = "สถานะผิดปกติ"; // แสดงค่า status เดิมถ้าไม่ใช่ S หรือ W
+                    }
+                    $('#docStatus').val(statusText + ' (' + formattedDate + ')');
+
+                    var BE = response;
+                    // Check if the status is not "รออนุมัติ"
+                    if (statusText !== 'รออนุมัติ') {
+                        // Hide the buttons if status is not "รออนุมัติ"
+                        document.getElementById('approveBtn').style.display = 'none';
+                        document.getElementById('editBtn').style.display = 'none';
+                        document.getElementById('rejectBtn').style.display = 'none';
+                    }
+                    // Check if the status is not "รออนุมัติ"
+                    if (statusText === 'รออนุมัติ') {
+                        // Hide the buttons if status is not "รออนุมัติ"
+                        document.getElementById('approveBtn').style.display = 'block';
+                        document.getElementById('editBtn').style.display = 'block';
+                        document.getElementById('rejectBtn').style.display = 'block';
+                    }
+                    // ทดสอบการแสดงข้อมูล BE
+                    console.log('ข้อมูลที่ได้จาก BillOfLading:', BE);
+                    var newUrl = '/Approve/Privacy?docId=' + encodeURIComponent(docNumber) + '&date=' + encodeURIComponent(formattedDate) + '&Status=' + encodeURIComponent(statusText);
+                    window.location.href = newUrl;
+
+                    // คุณสามารถดำเนินการเพิ่มเติมกับข้อมูลที่เก็บใน BE ได้ที่นี่
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching BillOfLading data:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่พบข้อมูล GetBillOfLading'
+                    });
+                    hideLoadingOverlay();
+                }
+            });
+            $.ajax({
+                url: '/Approve/TableBill', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                method: 'GET',
+                data: {
+                    docNumber: docNumber
+                },
+                success: function (response) {
+                    var tableBody = $('#dataTable tbody');
+                    tableBody.empty(); // ล้างข้อมูลเก่าในตาราง
+
+                    $.each(response, function (index, item) {
+                        var row = $('<tr>');
+
+                        row.append($('<td>').text(item.partNum)); // เปลี่ยนเป็นชื่อฟิลด์ที่ตรงกับข้อมูลของคุณ
+                        row.append($('<td>').text(item.partDescription));
+                        row.append($('<td>').text(item.qty));
+                        row.append($('<td>').text(item.unit));
+                        row.append($('<td style="display:none"> ').text(item.wareHouse));
+                        row.append($('<td style="display:none">').text(item.bin));
+
+                        tableBody.append(row);
+                    });
+                    hideLoadingOverlay();
+
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching BillOfLading data:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่พบข้อมูล TableBill'
+                    });
+                    hideLoadingOverlay();
+
+                }
+            });
+        });
+
+        $(window).on('load', function () {
+             const docNumber = sessionStorage.getItem('docId');
+             const date = sessionStorage.getItem('date');
+             const Company = sessionStorage.getItem('Company');
+                 const Status = sessionStorage.getItem('Status');
+
+             $('#docDate').val(date);
+             $('#docNumber').val(docNumber);
+             $('#docStatus').val(Status + "("+date+")");
+            if (docNumber) {
+                showLoadingOverlay();
+                // เรียกใช้ API เพื่อค้นหาข้อมูลจาก BillOfLading
+                $.ajax({
+                    url: '/Approve/GetBillOfLading', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                    method: 'GET',
+                    data: {
+                        docNumber: docNumber,
+                        Company: Company
+                    },
+                    success: function (response) {
+                        // เก็บข้อมูลที่ได้จากการค้นหาไว้ในตัวแปร BE
+                        $('#BE').val(response[0].description)
+                        $('#dep').val(response[0].depName)
+                        $('#Plant').val(response[0].plant)
+                        $('#Datedoc').val(response[0].reqDate.split('T')[0]);
+                        $('#BEcuse').val(response[0].remark)
+
+                        var BE = response;
+
+                        // ทดสอบการแสดงข้อมูล BE
+                        console.log('ข้อมูลที่ได้จาก BillOfLading:', BE);
+
+                        // คุณสามารถดำเนินการเพิ่มเติมกับข้อมูลที่เก็บใน BE ได้ที่นี่
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching BillOfLading data:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'ไม่พบข้อมูล GetBillOfLading'
+                        });
+                        hideLoadingOverlay();
+                    }
+                });
+                $.ajax({
+                    url: '/Approve/TableBill', // URL ของ Action ที่จะดึงข้อมูล BillOfLading
+                    method: 'GET',
+                    data: {
+                        docNumber: docNumber,
+                        Company:Company
+                    },
+                    success: function (response) {
+                        var tableBody = $('#dataTable tbody');
+                        tableBody.empty(); // ล้างข้อมูลเก่าในตาราง
+
+                        $.each(response, function (index, item) {
+                            var row = $('<tr>');
+
+                            row.append($('<td>').text(item.partNum)); // เปลี่ยนเป็นชื่อฟิลด์ที่ตรงกับข้อมูลของคุณ
+                            row.append($('<td>').text(item.partDescription));
+                            row.append($('<td>').text(item.qty.toFixed(2)).css('text-align', 'right'));
+                            row.append($('<td>').text(item.unit));
+                            row.append($('<td style="display:none">').text(item.wareHouse));
+                            row.append($('<td style="display:none">').text(item.bin));
+
+                            tableBody.append(row);
+                        });
+                        hideLoadingOverlay();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching BillOfLading data:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: 'ไม่พบข้อมูล TableBill'
+                        });
+                        hideLoadingOverlay();
+                    }
+                });
+            }
+            $('.btn-success').on('click', function () {
+                var docNumber = $('#docNumber').val(); // ดึงค่า docNumber
+                var DateSave = $('#docDate').val();
+                var BEcuse = $('#BEcuse').val();
+                if (docNumber) {
+                    // ส่งคำขอ AJAX เพื่ออัปเดตสถานะเป็น 'A'
+                    $.ajax({
+                        url: '/Approve/UpdateStatus', // URL ของ Action ใน Controller
+                        type: 'POST',
+                        data: {
+                            docNumber: docNumber,
+                            status: 'A' ,// สถานะใหม่ที่ต้องการอัปเดต
+                            BEcuse:BEcuse
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                // แจ้งเตือนผู้ใช้เมื่อการอัปเดตสำเร็จ
+                                $('#docStatus').val('อนุมัติ (' + DateSave + ')');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'อัปเดตสถานะสำเร็จ',
+                                    text: 'สถานะเอกสารถูกอัปเดตเป็น "อนุมัติ" เรียบร้อยแล้ว!'
+                                }).then(() => {
+                                    // เรียกใช้ฟังก์ชันในหน้าแม่ (index)
+                                    if (window.opener) {
+                                        window.opener.$('#searchButton').click(); // กระตุ้นการคลิก
+                                    }
+                                    // ปิดแท็บปัจจุบัน
+                                    window.close();
+                                });
+                                // Hide the buttons if status is not "รออนุมัติ"
+                                document.getElementById('approveBtn').style.display = 'none';
+                                document.getElementById('editBtn').style.display = 'none';
+                                document.getElementById('rejectBtn').style.display = 'none';
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'เกิดข้อผิดพลาด',
+                                    text: response.message || 'ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง'
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error updating status:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง'
+                            });
+                        }
+                    });
+                }
+            });
+            $('.btn-warning').on('click', function () {
+                var docNumber = $('#docNumber').val(); // ดึงค่า docNumber
+                var DateSave = $('#docDate').val();
+                var BEcuse = $('#BEcuse').val();
+
+                if (docNumber) {
+                    // ส่งคำขอ AJAX เพื่ออัปเดตสถานะเป็น 'A'
+                    $.ajax({
+                        url: '/Approve/UpdateStatus', // URL ของ Action ใน Controller
+                        type: 'POST',
+                        data: {
+                            docNumber: docNumber,
+                            status: 'E', // สถานะใหม่ที่ต้องการอัปเดต
+                            BEcuse:BEcuse
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                // แจ้งเตือนผู้ใช้เมื่อการอัปเดตสำเร็จ
+                                $('#docStatus').val('แก้ไข (' + DateSave + ')');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'อัปเดตสถานะสำเร็จ',
+                                    text: 'สถานะเอกสารถูกอัปเดตเป็น "แก้ไข" เรียบร้อยแล้ว!'
+                                }).then(() => {
+                                    // เรียกใช้ฟังก์ชันในหน้าแม่ (index)
+                                    if (window.opener) {
+                                        window.opener.$('#searchButton').click(); // กระตุ้นการคลิก
+                                    }
+                                    // ปิดแท็บปัจจุบัน
+                                    window.close();
+                                });
+                                // Hide the buttons if status is not "รออนุมัติ"
+                                document.getElementById('approveBtn').style.display = 'none';
+                                document.getElementById('editBtn').style.display = 'none';
+                                document.getElementById('rejectBtn').style.display = 'none';
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'เกิดข้อผิดพลาด',
+                                    text: response.message || 'ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง'
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error updating status:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง'
+                            });
+                        }
+                    });
+                }
+            });
+            $('.btn-danger').on('click', function () {
+                var docNumber = $('#docNumber').val(); // ดึงค่า docNumber
+                var DateSave = $('#docDate').val();
+                var BEcuse = $('#BEcuse').val();
+
+                if (docNumber) {
+                    // ส่งคำขอ AJAX เพื่ออัปเดตสถานะเป็น 'A'
+                    $.ajax({
+                        url: '/Approve/UpdateStatus', // URL ของ Action ใน Controller
+                        type: 'POST',
+                        data: {
+                            docNumber: docNumber,
+                            status: 'U' ,// สถานะใหม่ที่ต้องการอัปเดต
+                            BEcuse:BEcuse
+                        },
+                        success: function (response) {
+                            if (response.success) {
+
+                                // แจ้งเตือนผู้ใช้เมื่อการอัปเดตสำเร็จ
+                                $('#docStatus').val('ไม่อนุมัติ (' + DateSave + ')');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'อัปเดตสถานะสำเร็จ',
+                                    text: 'สถานะเอกสารถูกอัปเดตเป็น "ไม่อนุมัติ" เรียบร้อยแล้ว!'
+                                }).then(() => {
+                                    // เรียกใช้ฟังก์ชันในหน้าแม่ (index)
+                                    if (window.opener) {
+                                        window.opener.$('#searchButton').click(); // กระตุ้นการคลิก
+                                    }
+                                    // ปิดแท็บปัจจุบัน
+                                    window.close();
+                                });
+                                // Hide the buttons if status is not "รออนุมัติ"
+                                document.getElementById('approveBtn').style.display = 'none';
+                                document.getElementById('editBtn').style.display = 'none';
+                                document.getElementById('rejectBtn').style.display = 'none';
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'เกิดข้อผิดพลาด',
+                                    text: response.message || 'ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง'
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error updating status:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่อีกครั้ง'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

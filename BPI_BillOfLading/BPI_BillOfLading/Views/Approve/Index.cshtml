@@ -1,0 +1,281 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+
+<style>
+    /* สไตล์พื้นฐานของตาราง */
+    #dataTable {
+        width: 100%;
+        border-collapse: collapse; /* รวมเส้นขอบของเซลล์ */
+        background-color: #f8f9fa; /* สีพื้นหลัง */
+        text-align: left;
+    }
+
+        /* เส้นขอบของเซลล์ */
+        #dataTable th, #dataTable td {
+            border: 1px solid #dee2e6; /* สีเส้นขอบ */
+            padding: 8px; /* ระยะห่างด้านใน */
+        }
+
+        /* หัวตาราง */
+        #dataTable thead th {
+            background-color: #4391fa; /* สีน้ำเงินเหมือน table-primary */
+            color: white; /* ตัวอักษรสีขาว */
+            text-align: center;
+        }
+
+        /* แถวลำดับ */
+        #dataTable tbody tr:nth-child(even) {
+            background-color: #f2f2f2; /* สีแถวคู่ */
+        }
+
+        #dataTable tbody tr:hover {
+            background-color: #d3d3d3; /* สีเมื่อ hover */
+            cursor: pointer; /* เปลี่ยนเคอร์เซอร์ */
+        }
+    /* สีพื้นหลังสำหรับแถวที่ถูกเลือก */
+    .selected-row {
+        background-color: #f7ca00;
+    }
+
+</style>
+<div class="container-fluid mt-4">
+    <!-- Card 1 -->
+    <h5 class="card-title">ข้อมูลทั่วไป</h5>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <!-- Row 1: วันที่ - ถึงวันที่ -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="startDate" class="form-label">วันที่</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="col-md-6">
+                    <label for="endDate" class="form-label">ถึงวันที่</label>
+                    <input type="date" class="form-control" id="endDate">
+                </div>
+            </div>
+
+            <!-- Row 2: Dropdown สถานะ -->
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="statusDropdown" class="form-label">สถานะ</label>
+                    <select class="form-select" id="statusDropdown" style="background-color: #f0f0f0; color: black;">
+                        <option value="ALL">ทั้งหมด</option>
+                        <option value="W">รออนุมัติ</option>
+                        <option value="A">อนุมัติแล้ว</option>
+                        <option value="E">ส่งกลับแก้ไข</option>
+                        <option value="U">ไม่อนุมัติ</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <!-- Search Button with Icon -->
+                    <button id="searchButton" type="button" class="btn btn-primary">
+                        <i class="fas fa-search"></i> ค้นหา
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <label id="DataCode">@ViewBag.Username</label>
+
+    <!-- Spacer -->
+    <div class="my-4"></div>
+
+    <!-- Card 2 -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">ตารางข้อมูล</h5>
+
+            <!-- Table -->
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>วันที่</th>
+                        <th>เลขที่ใบเบิก</th>
+                        <th>แผนก/ฝ่าย</th>
+                        <th>ผู้เบิก</th>
+                        <th>สถานะ</th>
+                        <th style="text-align:left">หมายเหตุ</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // ตรวจสอบว่า refreshSearch ถูกตั้งค่าไว้ใน localStorage หรือไม่
+        if (localStorage.getItem('refreshSearch') === 'true') {
+            // เรียกใช้งานฟังก์ชัน click ที่ปุ่ม searchButton
+            $('#searchButton').click();
+
+            // ลบค่าจาก localStorage หลังการทำงานเสร็จ
+            localStorage.removeItem('refreshSearch');
+        }
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('#searchButton').click(function () {
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            var status = $('#statusDropdown').val();
+            var username = $('#DataCode').text();
+            var Company = '@ViewBag.Company';
+            showLoadingOverlay();
+            $.ajax({
+                url: '/Approve/GetFilteredData', // URL ของ Action ที่รับข้อมูล
+                method: 'GET',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    status: status,
+                    username: username,
+                    Company: Company
+                },
+                success: function (response) {
+                    var tableBody = $('#dataTable tbody');
+                    tableBody.empty(); // ล้างข้อมูลเก่าในตาราง
+
+                    $.each(response, function (index, item) {
+                        var row = $('<tr>');
+                        var docDate = new Date(item.docDate).toLocaleDateString('en-GB');
+                        var statusText = "";
+                        if (item.status === "S") {
+                            statusText = "บันทึก";
+                        } else if (item.status === "W") {
+                            statusText = "รออนุมัติ";
+                        } else if (item.status === "A") {
+                            statusText = "อนุมัติแล้ว";
+                        } else if (item.status === "C") {
+                            statusText = "ยกเลิกแล้ว";
+                        } else if (item.status === "E") {
+                            statusText = "แก้ไข";
+                        } else if (item.status === "P") {
+                            statusText = "มีการจ่ายของแล้ว บางส่วนหรือทั้งหมด";
+                        } else if (item.status === "U") {
+                            statusText = "ไม่อนุมัติ";
+                        } else {
+                            statusText = "สถานะผิดปกติ"; // แสดงค่า status เดิมถ้าไม่ใช่ S หรือ W
+                        }
+                        row.append($('<td>').text(docDate)); // เปลี่ยนเป็นชื่อฟิลด์ที่ตรงกับข้อมูลของคุณ
+                        row.append($('<td>').text(item.docID));
+                        row.append($('<td>').text(item.depName));
+                        row.append($('<td>').text(item.name));
+                        row.append($('<td>').text(statusText));
+                        row.append($('<td>').text(item.remark));
+
+                        tableBody.append(row);
+                    });
+                    hideLoadingOverlay();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                    alert('ไม่สามารถดึงข้อมูลได้');
+                    hideLoadingOverlay();
+
+                }
+            });
+        });
+    });
+
+</script>
+<script>
+    function showLoadingOverlay() {
+        $.LoadingOverlay("show", {
+            image: "",
+            fontawesome: "fa-solid fa-truck-front fa-bounce",
+        });
+    }
+
+    function hideLoadingOverlay() {
+        $.LoadingOverlay("hide");
+    }
+    $(document).ready(function () {
+
+        function getCurrentDate() {
+            var today = new Date();
+            var day = String(today.getDate()).padStart(2, '0');
+            var month = String(today.getMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
+            var year = today.getFullYear();
+            return year + '-' + month + '-' + day;
+        }
+
+        // ตั้งค่า default ของ startDate และ endDate เป็นวันที่ปัจจุบัน
+        $('#startDate').val(getCurrentDate());
+        $('#endDate').val(getCurrentDate());
+        // Event handler for table row click
+
+
+        $('#dataTable').on('click', 'tr', function () {
+            // ลบคลาส selected-row ออกจากแถวทั้งหมด
+            $('#dataTable tr').removeClass('selected-row');
+
+            // เพิ่มคลาส selected-row ให้กับแถวที่คลิก
+            $(this).addClass('selected-row');
+
+            var dateText = $(this).find('td').eq(0).text();  // ดึงค่า column ที่ 1 (Date)
+
+            // แปลงวันที่จาก DD/MM/YYYY เป็น YYYY-MM-DD
+            var dateParts = dateText.split('/');  // แยกวันที่ออกเป็นส่วน ๆ
+            var day = dateParts[0];
+            var month = dateParts[1];
+            var year = dateParts[2];
+
+            // ถ้าปีเป็นพุทธศักราช (มากกว่า 2500) ให้แปลงเป็นค.ศ.
+            if (parseInt(year) > 2400) {
+                year = parseInt(year) - 543;
+            }
+
+            // จัดรูปแบบเป็น YYYY-MM-DD สำหรับส่งผ่าน query string
+            var formattedDate = day + '/' + month + '/' + year;
+
+            // ทดสอบการแสดงวันที่แปลงแล้ว
+            console.log(formattedDate);
+
+            var docId = $(this).find('td').eq(1).text();  // ดึงค่า column ที่ 2 (docId)
+            var Status = $(this).find('td').eq(4).text();  // ดึงค่า column ที่ 2 (docId)
+            var Company = '@ViewBag.Company';
+            if (docId) {
+                // เก็บค่าลงใน sessionStorage
+                sessionStorage.setItem('docId', docId);
+                sessionStorage.setItem('date', formattedDate);
+                sessionStorage.setItem('Status', Status);
+                sessionStorage.setItem('Company', Company);
+
+                // เปิดหน้าใหม่โดยไม่ต้องส่งค่าใน URL
+                window.open('/Approve/Privacy', '_blank');
+            }
+
+        });
+
+
+
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        // เพิ่ม event hover สำหรับเปลี่ยนสีแถว
+        $('#dataTable tbody').on('mouseenter', 'tr', function () {
+            $(this).css('background-color', 'gray'); // เปลี่ยนสีแถวเป็นสีเทา
+        });
+
+        $('#dataTable tbody').on('mouseleave', 'tr', function () {
+            $(this).css('background-color', ''); // คืนค่าเดิมเมื่อเมาส์ออก
+        });
+
+
+    });
+</script>
